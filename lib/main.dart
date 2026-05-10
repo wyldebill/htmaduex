@@ -1,118 +1,63 @@
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:go_router/go_router.dart';
+
+import 'screens/detail_screen.dart';
+import 'screens/list_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/map_screen.dart';
+import 'screens/wizard_screen.dart';
+import 'theme/app_theme.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const NearbyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+final GoRouter _router = GoRouter(
+  initialLocation: '/login',
+  routes: <RouteBase>[
+    GoRoute(
+      path: '/login',
+      builder: (BuildContext context, GoRouterState state) =>
+          const LoginScreen(),
+    ),
+    GoRoute(
+      path: '/onboarding',
+      builder: (BuildContext context, GoRouterState state) =>
+          const WizardScreen(),
+    ),
+    GoRoute(
+      path: '/wizard',
+      redirect: (BuildContext context, GoRouterState state) => '/onboarding',
+    ),
+    GoRoute(
+      path: '/map',
+      builder: (BuildContext context, GoRouterState state) => const MapScreen(),
+    ),
+    GoRoute(
+      path: '/list',
+      builder: (BuildContext context, GoRouterState state) =>
+          const ListScreen(),
+    ),
+    GoRoute(
+      path: '/business/:id',
+      builder: (BuildContext context, GoRouterState state) {
+        final int id = int.tryParse(state.pathParameters['id'] ?? '') ?? 1;
+        return DetailScreen(businessId: id);
+      },
+    ),
+  ],
+);
 
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Mapme',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-      ),
-      home: const MapPage(),
-    );
-  }
-}
-
-class MapPage extends StatefulWidget {
-  const MapPage({super.key});
-
-  @override
-  State<MapPage> createState() => _MapPageState();
-}
-
-class _MapPageState extends State<MapPage> {
-  static const _fallbackCenter = LatLng(37.7749, -122.4194);
-  static const _defaultZoom = 13.0;
-  GoogleMapController? _mapController;
-  bool _isFindingMe = false;
-
-  Future<void> _findMe() async {
-    if (_isFindingMe) return;
-    setState(() {
-      _isFindingMe = true;
-    });
-
-    try {
-      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        _showMessage('Location services are disabled.');
-        return;
-      }
-
-      var permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-      }
-
-      if (permission == LocationPermission.denied ||
-          permission == LocationPermission.deniedForever) {
-        _showMessage('Location permission is required for Find Me.');
-        return;
-      }
-
-      final position = await Geolocator.getCurrentPosition();
-      final target = LatLng(position.latitude, position.longitude);
-      await _mapController?.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(target: target, zoom: _defaultZoom),
-        ),
-      );
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isFindingMe = false;
-        });
-      }
-    }
-  }
-
-  void _showMessage(String message) {
-    if (!mounted) return;
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
-  }
-
-  @override
-  void dispose() {
-    _mapController?.dispose();
-    super.dispose();
-  }
+class NearbyApp extends StatelessWidget {
+  const NearbyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Mapme')),
-      body: GoogleMap(
-        // Start from a known location so the app is useful before permissions are granted.
-        initialCameraPosition: const CameraPosition(
-          target: _fallbackCenter,
-          zoom: _defaultZoom,
-        ),
-        myLocationEnabled: true,
-        myLocationButtonEnabled: false,
-        onMapCreated: (controller) => _mapController = controller,
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _findMe,
-        tooltip: 'Find Me',
-        child: _isFindingMe
-            ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              )
-            : const Icon(Icons.my_location),
-      ),
+    return MaterialApp.router(
+      title: 'Nearby',
+      debugShowCheckedModeBanner: false,
+      theme: appTheme,
+      routerConfig: _router,
     );
   }
 }
