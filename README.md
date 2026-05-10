@@ -5,10 +5,21 @@ Simple Flutter Google Maps app with a single screen and a **Find Me** button.
 ## Secret handling (no key in git)
 
 1. Create a local `.env` file in the repository root:
-   `GOOGLE_MAPS_API_KEY=your_real_key_here`
+   ```
+   GOOGLE_MAPS_API_KEY=your_real_key_here
+   FIREBASE_API_KEY=your_firebase_web_api_key
+   FIREBASE_APP_ID=your_firebase_app_id
+   FIREBASE_MESSAGING_SENDER_ID=your_firebase_sender_id
+   FIREBASE_PROJECT_ID=your_firebase_project_id
+   FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+   FIREBASE_STORAGE_BUCKET=your_project.appspot.com
+   FIREBASE_IOS_BUNDLE_ID=com.example.mapme
+   ```
 2. `.env` is gitignored, and native platform secret files are generated from it.
 
-Why this approach: the map SDKs need native build-time keys, so we inject from local runtime config instead of committing constants.
+Why this approach: map and Firebase settings are loaded at native build time from local runtime config, so secrets never land in source control.
+
+If you've used the FlutterFire CLI (`flutterfire configure`) the generated `lib/firebase_options.dart` will also be used as a safe fallback for local development when native secrets are not present.
 
 ## Local development
 
@@ -30,6 +41,7 @@ Android reads `.env` directly via Gradle each build.
 
 ## Codemagic
 
-`codemagic.yaml` expects `GOOGLE_MAPS_API_KEY` to be defined in Codemagic environment variables.
+`codemagic.yaml` expects these environment variables:
+`GOOGLE_MAPS_API_KEY`, `FIREBASE_API_KEY`, `FIREBASE_APP_ID`, `FIREBASE_MESSAGING_SENDER_ID`, `FIREBASE_PROJECT_ID`, `FIREBASE_AUTH_DOMAIN`, `FIREBASE_STORAGE_BUCKET`, `FIREBASE_IOS_BUNDLE_ID`.
 
 CI writes `.env` at build time, generates iOS xcconfig, runs tests, and builds Android APK.
