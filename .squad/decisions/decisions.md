@@ -28,6 +28,28 @@
 - Updated lib/firebase/app_firebase_options.dart to try native config, then generated firebase_options.dart.
 - Updated .squad history with the change.
 
+### 2026-05-09T21:45:53.665-05:00: Do not require FIREBASE_* Gradle env vars
+**By:** Zoe (Backend Dev)
+**What:** Stop enforcing FIREBASE_* values as required Gradle environment variables during Android builds. Instead, prefer the standard Firebase platform files (google-services.json / GoogleService-Info.plist) or the FlutterFire-generated firebase_options.dart.
+
+**Rationale:**
+- The standard Firebase setup for Android uses google-services.json; requiring env vars in Gradle causes build failures for developers who use the FlutterFire CLI or the Console flow.
+- Keeping Firebase keys optional avoids accidental secret exposure and aligns with FlutterFire best practices.
+
+**Consequences:**
+- android/app/build.gradle.kts no longer throws when FIREBASE_* variables are absent; BuildConfig fields are populated with empty strings when not supplied, preserving compatibility with native code.
+- Developers should use `flutterfire configure` or add platform files to configure Firebase. CI can still inject env vars if desired.
+
+**Actions:**
+- Removed buildscript requirement from android/app/build.gradle.kts.
+- Updated README.md with Firebase configuration guidance.
+- Updated .squad history with the change.
+
+### 2026-05-09T21:45:53.665-05:00: User directive
+**By:** William Austin (via Copilot)
+**What:** Gradle should not require a Firebase API key for this setup.
+**Why:** User request — captured for team memory
+
 ---
 
 ## Archive (decisions older than 30 days)
