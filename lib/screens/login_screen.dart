@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 
+import '../auth/auth_service.dart';
 import '../theme/app_theme.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({super.key, this.authService});
+
+  final AuthService? authService;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -14,6 +18,13 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _signInMode = true;
+  late final AuthService _authService;
+
+  @override
+  void initState() {
+    super.initState();
+    _authService = widget.authService ?? FirebaseAuthService();
+  }
 
   @override
   void dispose() {
@@ -22,8 +33,33 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void _continue() {
-    context.go('/onboarding');
+  Future<void> _continue() async {
+    final String email = _usernameController.text.trim();
+    final String password = _passwordController.text;
+    if (email.isEmpty || password.isEmpty) {
+      _showMessage('Enter email and password.');
+      return;
+    }
+
+    try {
+      if (_signInMode) {
+        await _authService.signIn(email: email, password: password);
+      } else {
+        await _authService.signUp(email: email, password: password);
+      }
+      if (!mounted) return;
+      context.go('/onboarding');
+    } on FirebaseAuthException catch (e) {
+      _showMessage(e.message ?? 'Authentication failed.');
+    } catch (_) {
+      _showMessage('Authentication failed.');
+    }
+  }
+
+  void _showMessage(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -45,16 +81,8 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               child: Stack(
                 children: <Widget>[
-                  Positioned(
-                    top: 0,
-                    right: 0,
-                    child: _decorativeCircle(18),
-                  ),
-                  Positioned(
-                    left: 0,
-                    bottom: 8,
-                    child: _decorativeCircle(14),
-                  ),
+                  Positioned(top: 0, right: 0, child: _decorativeCircle(18)),
+                  Positioned(left: 0, bottom: 8, child: _decorativeCircle(14)),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -68,7 +96,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               borderRadius: BorderRadius.circular(10),
                               boxShadow: <BoxShadow>[
                                 BoxShadow(
-                                  color: AppColors.primary.withValues(alpha: 0.5),
+                                  color: AppColors.primary.withValues(
+                                    alpha: 0.5,
+                                  ),
                                   blurRadius: 20,
                                   offset: const Offset(0, 6),
                                 ),
@@ -104,8 +134,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             ? 'Sign in to pick up where you left off.'
                             : 'Create a free account to save places and build your list.',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: AppColors.inkSoft,
-                            ),
+                          color: AppColors.inkSoft,
+                        ),
                       ),
                     ],
                   ),
@@ -150,7 +180,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: _continue,
+                        onPressed: () => _continue(),
                         child: Text(_signInMode ? 'Sign in' : 'Create account'),
                       ),
                     ),
@@ -178,15 +208,18 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: <Widget>[
                         Expanded(
                           child: OutlinedButton.icon(
-                            onPressed: _continue,
-                            icon: const Icon(Icons.g_mobiledata_rounded, size: 22),
+                            onPressed: () => _continue(),
+                            icon: const Icon(
+                              Icons.g_mobiledata_rounded,
+                              size: 22,
+                            ),
                             label: const Text('Google'),
                           ),
                         ),
                         const SizedBox(width: 10),
                         Expanded(
                           child: OutlinedButton.icon(
-                            onPressed: _continue,
+                            onPressed: () => _continue(),
                             icon: const Icon(Icons.apple_rounded),
                             label: const Text('Apple'),
                           ),
@@ -218,7 +251,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 6),
                     TextButton(
-                      onPressed: () => setState(() => _signInMode = !_signInMode),
+                      onPressed: () =>
+                          setState(() => _signInMode = !_signInMode),
                       child: const Text('Toggle mode'),
                     ),
                   ],
@@ -271,7 +305,9 @@ class _LoginScreenState extends State<LoginScreen> {
           height: radius * 2,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: AppColors.primary.withValues(alpha: 0.25)),
+            border: Border.all(
+              color: AppColors.primary.withValues(alpha: 0.25),
+            ),
           ),
         ),
         const SizedBox(height: 4),

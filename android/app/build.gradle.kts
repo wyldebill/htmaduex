@@ -3,6 +3,9 @@ import java.io.File
 
 plugins {
     id("com.android.application")
+    // START: FlutterFire Configuration
+    id("com.google.gms.google-services")
+    // END: FlutterFire Configuration
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
@@ -23,21 +26,39 @@ fun readEnvValue(envFile: File, key: String): String? {
 }
 
 val envFile = rootProject.file("../.env")
-val googleMapsApiKey = readEnvValue(envFile, "GOOGLE_MAPS_API_KEY")
-    ?: System.getenv("GOOGLE_MAPS_API_KEY")
-    ?: (project.findProperty("GOOGLE_MAPS_API_KEY") as String?)
-    ?: ""
-
-if (googleMapsApiKey.isBlank()) {
-    throw GradleException(
-        "Missing GOOGLE_MAPS_API_KEY. Define it in .env (repo root) or environment variables."
-    )
+fun requiredSecret(key: String): String {
+    val value = readEnvValue(envFile, key)
+        ?: System.getenv(key)
+        ?: (project.findProperty(key) as String?)
+        ?: ""
+    if (value.isBlank()) {
+        throw GradleException("Missing $key. Define it in .env (repo root) or environment variables.")
+    }
+    return value
 }
+
+fun optionalSecret(key: String): String {
+    return readEnvValue(envFile, key)
+        ?: System.getenv(key)
+        ?: (project.findProperty(key) as String?)
+        ?: ""
+}
+
+val googleMapsApiKey = requiredSecret("GOOGLE_MAPS_API_KEY")
+val firebaseApiKey = optionalSecret("FIREBASE_API_KEY")
+val firebaseAppId = optionalSecret("FIREBASE_APP_ID")
+val firebaseMessagingSenderId = optionalSecret("FIREBASE_MESSAGING_SENDER_ID")
+val firebaseProjectId = optionalSecret("FIREBASE_PROJECT_ID")
+val firebaseAuthDomain = optionalSecret("FIREBASE_AUTH_DOMAIN")
+val firebaseStorageBucket = optionalSecret("FIREBASE_STORAGE_BUCKET")
 
 android {
     namespace = "com.example.mapme"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
+    buildFeatures {
+        buildConfig = true
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -59,6 +80,12 @@ android {
         versionName = flutter.versionName
         // Keep the API key in runtime-only config so it never lands in source control.
         manifestPlaceholders["GOOGLE_MAPS_API_KEY"] = googleMapsApiKey
+        buildConfigField("String", "FIREBASE_API_KEY", "\"$firebaseApiKey\"")
+        buildConfigField("String", "FIREBASE_APP_ID", "\"$firebaseAppId\"")
+        buildConfigField("String", "FIREBASE_MESSAGING_SENDER_ID", "\"$firebaseMessagingSenderId\"")
+        buildConfigField("String", "FIREBASE_PROJECT_ID", "\"$firebaseProjectId\"")
+        buildConfigField("String", "FIREBASE_AUTH_DOMAIN", "\"$firebaseAuthDomain\"")
+        buildConfigField("String", "FIREBASE_STORAGE_BUCKET", "\"$firebaseStorageBucket\"")
     }
 
     buildTypes {
