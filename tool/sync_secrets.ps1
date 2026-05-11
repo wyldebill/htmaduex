@@ -3,35 +3,50 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$repoRoot = Split-Path -Parent $PSScriptRoot
+$resolvedEnvPath = $EnvPath
 
-if (!(Test-Path $EnvPath)) {
+if (!(Test-Path $resolvedEnvPath) -and -not [System.IO.Path]::IsPathRooted($EnvPath)) {
+  $resolvedEnvPath = Join-Path $repoRoot $EnvPath
+}
+
+if (!(Test-Path $resolvedEnvPath)) {
   throw "Missing $EnvPath. Add required Maps/Firebase keys to your local .env first."
 }
 
-$envLines = Get-Content $EnvPath
-function Read-Secret([string]$Name) {
+$envLines = Get-Content $resolvedEnvPath
+function Read-RequiredSecret([string]$Name) {
   $line = $envLines | Where-Object { $_ -match "^\s*$Name\s*=" } | Select-Object -First 1
   if (-not $line) {
-    throw "$Name is missing in $EnvPath."
+    throw "$Name is missing in $resolvedEnvPath."
   }
 
   $value = ($line -split "=", 2)[1].Trim().Trim('"').Trim("'")
   if ([string]::IsNullOrWhiteSpace($value)) {
-    throw "$Name in $EnvPath is empty."
+    throw "$Name in $resolvedEnvPath is empty."
   }
   return $value
 }
 
-$apiKey = Read-Secret "GOOGLE_MAPS_API_KEY"
-$firebaseApiKey = Read-Secret "FIREBASE_API_KEY"
-$firebaseAppId = Read-Secret "FIREBASE_APP_ID"
-$firebaseSenderId = Read-Secret "FIREBASE_MESSAGING_SENDER_ID"
-$firebaseProjectId = Read-Secret "FIREBASE_PROJECT_ID"
-$firebaseAuthDomain = Read-Secret "FIREBASE_AUTH_DOMAIN"
-$firebaseStorageBucket = Read-Secret "FIREBASE_STORAGE_BUCKET"
-$firebaseIosBundleId = Read-Secret "FIREBASE_IOS_BUNDLE_ID"
+function Read-OptionalSecret([string]$Name) {
+  $line = $envLines | Where-Object { $_ -match "^\s*$Name\s*=" } | Select-Object -First 1
+  if (-not $line) {
+    return ""
+  }
 
-$target = "ios\Flutter\Secrets.xcconfig"
+  return ($line -split "=", 2)[1].Trim().Trim('"').Trim("'")
+}
+
+$apiKey = Read-RequiredSecret "GOOGLE_MAPS_API_KEY"
+$firebaseApiKey = Read-OptionalSecret "FIREBASE_API_KEY"
+$firebaseAppId = Read-OptionalSecret "FIREBASE_APP_ID"
+$firebaseSenderId = Read-OptionalSecret "FIREBASE_MESSAGING_SENDER_ID"
+$firebaseProjectId = Read-OptionalSecret "FIREBASE_PROJECT_ID"
+$firebaseAuthDomain = Read-OptionalSecret "FIREBASE_AUTH_DOMAIN"
+$firebaseStorageBucket = Read-OptionalSecret "FIREBASE_STORAGE_BUCKET"
+$firebaseIosBundleId = Read-OptionalSecret "FIREBASE_IOS_BUNDLE_ID"
+
+$target = Join-Path $repoRoot "ios/Flutter/Secrets.xcconfig"
 # iOS build settings require this file before compile, so we generate it from local env.
 $lines = @(
   "GOOGLE_MAPS_API_KEY=$apiKey"
