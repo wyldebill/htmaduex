@@ -6,7 +6,10 @@ workflows:
     scripts:
       - name: Materialize local secret files
         script: |
-          echo "GOOGLE_MAPS_API_KEY=$GOOGLE_MAPS_API_KEY" > .env
+          cat > .env <<EOF
+          GOOGLE_MAPS_API_KEY="${GOOGLE_MAPS_API_KEY}"
+  
+          EOF
           chmod +x tool/sync_secrets.sh
           ./tool/sync_secrets.sh .env
       - name: Install dependencies
