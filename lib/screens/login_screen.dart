@@ -227,34 +227,33 @@ class _LoginScreenState extends State<LoginScreen> {
                       ],
                     ),
                     const Spacer(),
-                    Text.rich(
-                      TextSpan(
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: AppColors.inkSoft,
-                        ),
-                        children: <TextSpan>[
-                          TextSpan(
-                            text: _signInMode
-                                ? "Don't have an account? "
-                                : 'Already a member? ',
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 4,
+                      children: <Widget>[
+                        Text(
+                          _signInMode
+                              ? "Don't have an account?"
+                              : 'Already a member?',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: AppColors.inkSoft,
                           ),
-                          TextSpan(
-                            text: _signInMode ? 'Sign up' : 'Sign in',
+                        ),
+                        TextButton(
+                          onPressed: () => setState(() => _signInMode = !_signInMode),
+                          child: Text(
+                            _signInMode ? 'Sign up' : 'Sign in',
                             style: const TextStyle(
                               color: AppColors.primary,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 6),
-                    TextButton(
-                      onPressed: () =>
-                          setState(() => _signInMode = !_signInMode),
-                      child: const Text('Toggle mode'),
-                    ),
                   ],
                 ),
               ),
