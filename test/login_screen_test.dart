@@ -5,12 +5,14 @@ import 'package:go_router/go_router.dart';
 
 import 'package:mapme/auth/auth_service.dart';
 import 'package:mapme/screens/login_screen.dart';
+import 'package:mapme/screens/verification_screen.dart';
 import 'package:mapme/theme/app_theme.dart';
 
 class _FakeAuthService implements AuthService {
-  _FakeAuthService({this.fail = false});
+  _FakeAuthService({this.fail = false, this.unverified = false});
 
   final bool fail;
+  final bool unverified;
 
   @override
   Future<void> signIn({required String email, required String password}) async {
@@ -19,6 +21,9 @@ class _FakeAuthService implements AuthService {
         code: 'invalid-credential',
         message: 'Bad credentials',
       );
+    }
+    if (unverified) {
+      throw FirebaseAuthException(code: 'email-not-verified', message: 'Please verify');
     }
   }
 
@@ -31,6 +36,12 @@ class _FakeAuthService implements AuthService {
       );
     }
   }
+
+  @override
+  Future<void> signOut() async {}
+
+  @override
+  Future<void> resendVerification() async {}
 }
 
 void main() {
@@ -112,5 +123,43 @@ void main() {
     await tester.pump();
 
     expect(find.text('Bad credentials'), findsOneWidget);
+  });
+
+  testWidgets('unverified sign in routes to verification screen', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(1170, 2532);
+    tester.view.devicePixelRatio = 3.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    final GoRouter router = GoRouter(
+      initialLocation: '/login',
+      routes: <RouteBase>[
+        GoRoute(
+          path: '/login',
+          builder: (BuildContext context, GoRouterState state) =>
+              LoginScreen(authService: _FakeAuthService(unverified: true)),
+        ),
+        GoRoute(
+          path: '/verify',
+          builder: (BuildContext context, GoRouterState state) =>
+              VerificationScreen(authService: _FakeAuthService()),
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      MaterialApp.router(theme: appTheme, routerConfig: router),
+    );
+
+    await tester.enterText(find.byType(TextField).at(0), 'user@example.com');
+    await tester.enterText(find.byType(TextField).at(1), 'secret123');
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Sign in'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Verify your email'), findsOneWidget);
   });
 }

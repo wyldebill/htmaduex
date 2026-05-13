@@ -44,12 +44,27 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       if (_signInMode) {
         await _authService.signIn(email: email, password: password);
+        if (!mounted) return;
+        context.go('/onboarding');
       } else {
         await _authService.signUp(email: email, password: password);
+        if (!mounted) return;
+        // After signup we send verification and route to verification flow
+        context.go('/verify');
       }
-      if (!mounted) return;
-      context.go('/onboarding');
     } on FirebaseAuthException catch (e) {
+      // Handle specific verification related errors
+      if (e.code == 'email-not-verified') {
+        if (!mounted) return;
+        // Route to verification UI
+        context.go('/verify');
+        return;
+      }
+      if (e.code == 'email-not-verified-expired') {
+        _showMessage(e.message ?? 'Verification window expired. Please create a new account.');
+        return;
+      }
+
       _showMessage(e.message ?? 'Authentication failed.');
     } catch (_) {
       _showMessage('Authentication failed.');
