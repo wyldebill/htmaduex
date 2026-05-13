@@ -24,24 +24,24 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
-	<key>LSRequiresIPhoneOS</key>
-	<true/>
-	<key>GoogleMapsApiKey</key>
-	<string>$(GOOGLE_MAPS_API_KEY)</string>
 	<key>FirebaseApiKey</key>
 	<string>$(FIREBASE_API_KEY)</string>
 	<key>FirebaseAppId</key>
 	<string>$(FIREBASE_APP_ID)</string>
+	<key>FirebaseAuthDomain</key>
+	<string>$(FIREBASE_AUTH_DOMAIN)</string>
+	<key>FirebaseIosBundleId</key>
+	<string>$(FIREBASE_IOS_BUNDLE_ID)</string>
 	<key>FirebaseMessagingSenderId</key>
 	<string>$(FIREBASE_MESSAGING_SENDER_ID)</string>
 	<key>FirebaseProjectId</key>
 	<string>$(FIREBASE_PROJECT_ID)</string>
-	<key>FirebaseAuthDomain</key>
-	<string>$(FIREBASE_AUTH_DOMAIN)</string>
 	<key>FirebaseStorageBucket</key>
 	<string>$(FIREBASE_STORAGE_BUCKET)</string>
-	<key>FirebaseIosBundleId</key>
-	<string>$(FIREBASE_IOS_BUNDLE_ID)</string>
+	<key>GoogleMapsApiKey</key>
+	<string>$(GOOGLE_MAPS_API_KEY)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Mapme uses your location to center the map when you tap Find Me.</string>
 	<key>UIApplicationSceneManifest</key>
