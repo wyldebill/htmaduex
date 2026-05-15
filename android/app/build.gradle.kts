@@ -44,7 +44,7 @@ fun optionalSecret(key: String): String {
         ?: ""
 }
 
-val googleMapsApiKey = requiredSecret("GOOGLE_MAPS_API_KEY")
+val googleMapsApiKeyAndroid = requiredSecret("GOOGLE_MAPS_API_KEY_ANDROID")
 val firebaseApiKey = optionalSecret("FIREBASE_API_KEY")
 val firebaseAppId = optionalSecret("FIREBASE_APP_ID")
 val firebaseMessagingSenderId = optionalSecret("FIREBASE_MESSAGING_SENDER_ID")
@@ -53,7 +53,7 @@ val firebaseAuthDomain = optionalSecret("FIREBASE_AUTH_DOMAIN")
 val firebaseStorageBucket = optionalSecret("FIREBASE_STORAGE_BUCKET")
 
 android {
-    namespace = "com.example.mapme"
+    namespace = "com.v3solutions.htmarevived"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
     buildFeatures {
@@ -71,7 +71,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.mapme"
+        applicationId = "com.v3solutions.htmarevived"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -79,7 +79,7 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
         // Keep the API key in runtime-only config so it never lands in source control.
-        manifestPlaceholders["GOOGLE_MAPS_API_KEY"] = googleMapsApiKey
+        manifestPlaceholders["GOOGLE_MAPS_API_KEY_ANDROID"] = googleMapsApiKeyAndroid
         buildConfigField("String", "FIREBASE_API_KEY", "\"$firebaseApiKey\"")
         buildConfigField("String", "FIREBASE_APP_ID", "\"$firebaseAppId\"")
         buildConfigField("String", "FIREBASE_MESSAGING_SENDER_ID", "\"$firebaseMessagingSenderId\"")

@@ -56,15 +56,17 @@ The primary flow is route-driven:
 
 ### Platform/build-time secret flow (Google Maps API key)
 
-- Source of truth is local `.env` (`GOOGLE_MAPS_API_KEY=...`) for development.
+- Source of truth is local `.env` with platform-specific keys for development:
+  - `GOOGLE_MAPS_API_KEY_ANDROID=...`
+  - `GOOGLE_MAPS_API_KEY_IOS=...`
 - Android:
   - `android/app/build.gradle.kts` reads `.env` / environment / Gradle property
-  - injects `manifestPlaceholders["GOOGLE_MAPS_API_KEY"]`
+  - injects `manifestPlaceholders["GOOGLE_MAPS_API_KEY_ANDROID"]`
   - key is consumed in `AndroidManifest.xml`
 - iOS:
   - `tool/sync_secrets.ps1` or `tool/sync_secrets.sh` generates `ios/Flutter/Secrets.xcconfig`
   - `Debug.xcconfig` and `Release.xcconfig` include this file
-  - key is consumed via `Info.plist` (`$(GOOGLE_MAPS_API_KEY)`)
+  - key is consumed via `Info.plist` (`$(GOOGLE_MAPS_API_KEY_IOS)`)
 
 This keeps API keys out of committed constants and source code.
 
