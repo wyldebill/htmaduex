@@ -38,3 +38,15 @@ Android reads `.env` directly via Gradle each build.
 `GOOGLE_MAPS_API_KEY_ANDROID`, `GOOGLE_MAPS_API_KEY_IOS`, `FIREBASE_API_KEY`, `FIREBASE_APP_ID`, `FIREBASE_MESSAGING_SENDER_ID`, `FIREBASE_PROJECT_ID`, `FIREBASE_AUTH_DOMAIN`, `FIREBASE_STORAGE_BUCKET`, `FIREBASE_IOS_BUNDLE_ID`.
 
 CI writes `.env` at build time, generates iOS xcconfig, runs tests, and builds Android APK.
+
+## Buffalo business dataset + Firestore seed
+
+- Dataset file: `assets/data/buffalo_businesses.json` (31 Buffalo, MN businesses).
+- App map/list/detail screens load from this JSON file.
+- To seed/reseed Firestore from this file:
+  1. `cd tool && npm install`
+  2. Enable the **Cloud Firestore API** for your Google Cloud project (one-time setup).
+  3. Authenticate for Application Default Credentials (`gcloud auth application-default login`) or set `GOOGLE_APPLICATION_CREDENTIALS`.
+  4. Ensure a Firestore database exists (first-time only): `gcloud firestore databases create --database='(default)' --location=us-central1 --type=firestore-native --project=shopsfirebase-a92b0`
+  5. From repo root: `FIREBASE_PROJECT_ID=shopsfirebase-a92b0 node tool/seed_businesses_firestore.mjs`
+  6. Optional: set `FIRESTORE_COLLECTION` to override default collection name (`businesses`).
