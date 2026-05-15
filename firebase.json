@@ -1,1 +1,25 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"shopsfirebase-a92b0","appId":"1:755342721880:android:10225bb575fa9b6feddb2d","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"shopsfirebase-a92b0","configurations":{"android":"1:755342721880:android:10225bb575fa9b6feddb2d","ios":"1:755342721880:ios:bb21a41123f6320deddb2d"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "shopsfirebase-a92b0",
+          "appId": "1:755342721880:android:10225bb575fa9b6feddb2d",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "shopsfirebase-a92b0",
+          "configurations": {
+            "android": "1:755342721880:android:10225bb575fa9b6feddb2d",
+            "ios": "1:755342721880:ios:bb21a41123f6320deddb2d"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}
