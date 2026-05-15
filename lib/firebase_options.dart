@@ -65,7 +65,6 @@ class DefaultFirebaseOptions {
     projectId: 'shopsfirebase-a92b0',
     databaseURL: 'https://shopsfirebase-a92b0-default-rtdb.firebaseio.com',
     storageBucket: 'shopsfirebase-a92b0.firebasestorage.app',
-    iosBundleId: 'com.example.mapme',
+    iosBundleId: 'com.v3solutions.htmarevived',
   );
-
 }

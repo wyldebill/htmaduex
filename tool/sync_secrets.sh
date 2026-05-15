@@ -33,7 +33,7 @@ optional_secret() {
   echo "$value"
 }
 
-api_key="$(required_secret GOOGLE_MAPS_API_KEY)"
+api_key_ios="$(required_secret GOOGLE_MAPS_API_KEY_IOS)"
 firebase_api_key="$(optional_secret FIREBASE_API_KEY)"
 firebase_app_id="$(optional_secret FIREBASE_APP_ID)"
 firebase_sender_id="$(optional_secret FIREBASE_MESSAGING_SENDER_ID)"
@@ -45,7 +45,7 @@ firebase_ios_bundle_id="$(optional_secret FIREBASE_IOS_BUNDLE_ID)"
 # iOS needs this at build time, so we materialize an ignored xcconfig from .env.
 mkdir -p "$REPO_ROOT/ios/Flutter"
 cat > "$REPO_ROOT/ios/Flutter/Secrets.xcconfig" <<EOF
-GOOGLE_MAPS_API_KEY=$api_key
+GOOGLE_MAPS_API_KEY_IOS=$api_key_ios
 FIREBASE_API_KEY=$firebase_api_key
 FIREBASE_APP_ID=$firebase_app_id
 FIREBASE_MESSAGING_SENDER_ID=$firebase_sender_id

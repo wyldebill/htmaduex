@@ -7,7 +7,8 @@ workflows:
       - name: Materialize local secret files
         script: |
           cat > .env <<EOF
-          GOOGLE_MAPS_API_KEY="${GOOGLE_MAPS_API_KEY}"
+          GOOGLE_MAPS_API_KEY_ANDROID="${GOOGLE_MAPS_API_KEY_ANDROID}"
+          GOOGLE_MAPS_API_KEY_IOS="${GOOGLE_MAPS_API_KEY_IOS}"
   
           EOF
           chmod +x tool/sync_secrets.sh

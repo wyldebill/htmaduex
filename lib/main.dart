@@ -6,6 +6,7 @@ import 'firebase/app_firebase_options.dart';
 import 'screens/detail_screen.dart';
 import 'screens/list_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/verification_screen.dart';
 import 'screens/map_screen.dart';
 import 'screens/wizard_screen.dart';
 import 'theme/app_theme.dart';
@@ -25,6 +26,11 @@ final GoRouter _router = GoRouter(
       path: '/login',
       builder: (BuildContext context, GoRouterState state) =>
           const LoginScreen(),
+    ),
+    GoRoute(
+      path: '/verify',
+      builder: (BuildContext context, GoRouterState state) =>
+          const VerificationScreen(),
     ),
     GoRoute(
       path: '/onboarding',
@@ -53,6 +59,7 @@ final GoRouter _router = GoRouter(
     ),
   ],
 );
+
 
 class NearbyApp extends StatelessWidget {
   const NearbyApp({super.key});
