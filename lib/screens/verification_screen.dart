@@ -29,11 +29,22 @@ class _VerificationScreenState extends State<VerificationScreen> {
     try {
       await _authService.resendVerification();
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Verification email sent.')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Verification email sent.')));
     } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message ?? 'Failed to resend.')));
+      final String message = e.code == 'no-user'
+          ? 'Your verification session expired. Please go back and sign up again to get a new verification email.'
+          : e.code == 'too-many-requests'
+          ? 'Too many resend attempts. Please wait a bit before trying again.'
+          : (e.message ?? 'Failed to resend.');
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     } catch (_) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to resend.')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Failed to resend.')));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -55,7 +66,11 @@ class _VerificationScreenState extends State<VerificationScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             const SizedBox(height: 20),
-            const Icon(Icons.mark_email_read_rounded, size: 88, color: AppColors.primary),
+            const Icon(
+              Icons.mark_email_read_rounded,
+              size: 88,
+              color: AppColors.primary,
+            ),
             const SizedBox(height: 20),
             const Text(
               'A verification email has been sent to your address. Please click the link in that email to verify your account.',
@@ -64,13 +79,12 @@ class _VerificationScreenState extends State<VerificationScreen> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _loading ? null : _resend,
-              child: Text(_loading ? 'Sending...' : 'Resend verification email'),
+              child: Text(
+                _loading ? 'Sending...' : 'Resend verification email',
+              ),
             ),
             const SizedBox(height: 12),
-            OutlinedButton(
-              onPressed: _signOut,
-              child: const Text('Sign out'),
-            ),
+            OutlinedButton(onPressed: _signOut, child: const Text('Sign out')),
             const Spacer(),
             const Text(
               'Verification links expire after 7 days. If the link expires, you will need to create a new account.',
