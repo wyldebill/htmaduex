@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
+import 'email_verification_status_store.dart';
+
 abstract class AuthService {
   Future<void> signIn({required String email, required String password});
 
@@ -11,9 +13,15 @@ abstract class AuthService {
 }
 
 class FirebaseAuthService implements AuthService {
-  FirebaseAuthService({FirebaseAuth? auth}) : _auth = auth ?? FirebaseAuth.instance;
+  FirebaseAuthService({
+    FirebaseAuth? auth,
+    EmailVerificationStatusStore? verificationStatusStore,
+  }) : _auth = auth ?? FirebaseAuth.instance,
+       _verificationStatusStore =
+           verificationStatusStore ?? FirestoreEmailVerificationStatusStore();
 
   final FirebaseAuth _auth;
+  final EmailVerificationStatusStore _verificationStatusStore;
 
   static const Duration _verificationWindow = Duration(days: 7);
 
@@ -26,35 +34,46 @@ class FirebaseAuthService implements AuthService {
 
     final User? user = cred.user ?? _auth.currentUser;
     if (user == null) {
-      throw FirebaseAuthException(code: 'no-user', message: 'No user returned from Firebase.');
+      throw FirebaseAuthException(
+        code: 'no-user',
+        message: 'No user returned from Firebase.',
+      );
     }
 
     // Ensure we have latest state
     await user.reload();
     final User? refreshed = _auth.currentUser;
     if (refreshed == null) {
-      throw FirebaseAuthException(code: 'no-user', message: 'No user after reload.');
+      throw FirebaseAuthException(
+        code: 'no-user',
+        message: 'No user after reload.',
+      );
     }
 
     if (!refreshed.emailVerified) {
+      await _markPendingVerification(refreshed, fallbackEmail: email.trim());
       final DateTime? created = refreshed.metadata.creationTime;
-      if (created != null && DateTime.now().difference(created) > _verificationWindow) {
+      if (created != null &&
+          DateTime.now().difference(created) > _verificationWindow) {
         // Sign out the unverified expired account and instruct recreation
         await signOut();
         throw FirebaseAuthException(
-            code: 'email-not-verified-expired',
-            message:
-                'Email not verified and verification window has expired. Please create a new account.');
+          code: 'email-not-verified-expired',
+          message:
+              'Email not verified and verification window has expired. Please create a new account.',
+        );
       }
 
       // Signed in but not verified yet
       await signOut();
       throw FirebaseAuthException(
-          code: 'email-not-verified',
-          message: 'Your email address has not been verified. Please verify before signing in.');
+        code: 'email-not-verified',
+        message:
+            'Your email address has not been verified. Please verify before signing in.',
+      );
     }
 
-    // Email verified — proceed
+    await _markVerified(refreshed);
   }
 
   @override
@@ -66,7 +85,10 @@ class FirebaseAuthService implements AuthService {
 
     final User? user = cred.user ?? _auth.currentUser;
     if (user == null) {
-      throw FirebaseAuthException(code: 'no-user', message: 'Failed to create user.');
+      throw FirebaseAuthException(
+        code: 'no-user',
+        message: 'Failed to create user.',
+      );
     }
 
     try {
@@ -74,11 +96,13 @@ class FirebaseAuthService implements AuthService {
     } catch (e) {
       // If sending verification fails, sign the user out and forward the error
       await signOut();
-      throw FirebaseAuthException(code: 'verification-send-failed', message: e.toString());
+      throw FirebaseAuthException(
+        code: 'verification-send-failed',
+        message: e.toString(),
+      );
     }
 
-    // Do not keep user signed in until they verify
-    await signOut();
+    await _markPendingVerification(user, fallbackEmail: email.trim());
   }
 
   @override
@@ -90,9 +114,44 @@ class FirebaseAuthService implements AuthService {
   Future<void> resendVerification() async {
     final User? user = _auth.currentUser;
     if (user == null) {
-      throw FirebaseAuthException(code: 'no-user', message: 'No user signed in to resend verification.');
+      throw FirebaseAuthException(
+        code: 'no-user',
+        message: 'No active verification session. Please sign up again.',
+      );
     }
 
     await user.sendEmailVerification();
+  }
+
+  Future<void> _markPendingVerification(
+    User user, {
+    required String fallbackEmail,
+  }) async {
+    try {
+      await _verificationStatusStore.markPendingVerification(
+        uid: user.uid,
+        email: user.email ?? fallbackEmail,
+      );
+    } on FirebaseException catch (e) {
+      throw FirebaseAuthException(
+        code: 'verification-status-sync-failed',
+        message:
+            'Unable to save verification status right now. ${e.message ?? ''}'
+                .trim(),
+      );
+    }
+  }
+
+  Future<void> _markVerified(User user) async {
+    try {
+      await _verificationStatusStore.markVerified(uid: user.uid);
+    } on FirebaseException catch (e) {
+      throw FirebaseAuthException(
+        code: 'verification-status-sync-failed',
+        message:
+            'Unable to update verification status right now. ${e.message ?? ''}'
+                .trim(),
+      );
+    }
   }
 }
