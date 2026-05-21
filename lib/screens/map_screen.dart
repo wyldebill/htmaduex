@@ -14,7 +14,7 @@ class MapScreen extends StatefulWidget {
   const MapScreen({
     super.key,
     this.businessesFuture,
-    this.initialSelected = true,
+    this.initialSelected = false,
     this.mapSupportedOverride,
   });
 
@@ -236,164 +236,184 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                 ),
               ),
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.fromLTRB(18, 10, 18, 28),
-                  decoration: const BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.vertical(
-                      top: Radius.circular(24),
-                    ),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                        color: Color(0x1A000000),
-                        blurRadius: 24,
-                        offset: Offset(0, -8),
-                      ),
-                    ],
-                  ),
-                  child: SafeArea(
-                    top: false,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Container(
-                          width: 40,
-                          height: 4,
-                          margin: const EdgeInsets.only(bottom: 14),
-                          decoration: BoxDecoration(
-                            color: AppColors.border,
-                            borderRadius: BorderRadius.circular(2),
-                          ),
+              AnimatedSlide(
+                offset: selected == null ? const Offset(0, 1) : Offset.zero,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+                child: AnimatedOpacity(
+                  opacity: selected == null ? 0.0 : 1.0,
+                  duration: const Duration(milliseconds: 200),
+                  child: IgnorePointer(
+                    ignoring: selected == null,
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.fromLTRB(
+                          18,
+                          10,
+                          18,
+                          28 +
+                              MediaQuery.of(context).padding.bottom +
+                              kBottomNavigationBarHeight,
                         ),
-                        Row(
-                          children: <Widget>[
-                            if (selected != null)
+                        decoration: const BoxDecoration(
+                          color: AppColors.surface,
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(24),
+                          ),
+                          boxShadow: <BoxShadow>[
+                            BoxShadow(
+                              color: Color(0x1A000000),
+                              blurRadius: 24,
+                              offset: Offset(0, -8),
+                            ),
+                          ],
+                        ),
+                        child: SafeArea(
+                          top: false,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
                               Container(
-                                width: 64,
-                                height: 64,
+                                width: 40,
+                                height: 4,
+                                margin: const EdgeInsets.only(bottom: 14),
                                 decoration: BoxDecoration(
-                                  color: AppColors.primarySoft,
-                                  borderRadius: BorderRadius.circular(14),
-                                  border: Border.all(
-                                    color: AppColors.primary.withValues(
-                                      alpha: 0.22,
+                                  color: AppColors.border,
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  if (selected != null)
+                                    Container(
+                                      width: 64,
+                                      height: 64,
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primarySoft,
+                                        borderRadius: BorderRadius.circular(14),
+                                        border: Border.all(
+                                          color: AppColors.primary.withValues(
+                                            alpha: 0.22,
+                                          ),
+                                        ),
+                                      ),
+                                      alignment: Alignment.center,
+                                      child: const Icon(
+                                        Icons.storefront_rounded,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: selected == null
+                                        ? const Text(
+                                            'No places match this category.',
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              color: AppColors.inkSoft,
+                                            ),
+                                          )
+                                        : Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                selected.categoryLabel,
+                                                style: const TextStyle(
+                                                  fontSize: 11,
+                                                  letterSpacing: 0.4,
+                                                  fontWeight: FontWeight.w700,
+                                                  color: AppColors.openGreen,
+                                                ),
+                                              ),
+                                              Text(
+                                                selected.name,
+                                                style: const TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w700,
+                                                  letterSpacing: -0.3,
+                                                ),
+                                              ),
+                                              Text(
+                                                selected.address,
+                                                style: const TextStyle(
+                                                  fontSize: 13,
+                                                  color: AppColors.inkSoft,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                  ),
+                                  if (selected != null)
+                                    IconButton(
+                                      onPressed: () {
+                                        final int sid = selectedId!;
+                                        setState(() {
+                                          if (_saved.contains(sid)) {
+                                            _saved.remove(sid);
+                                          } else {
+                                            _saved.add(sid);
+                                          }
+                                        });
+                                      },
+                                      icon: Icon(
+                                        isSaved
+                                            ? Icons.favorite_rounded
+                                            : Icons.favorite_border_rounded,
+                                        color: isSaved
+                                            ? AppColors.primary
+                                            : AppColors.inkSoft,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              const SizedBox(height: 14),
+                              Row(
+                                children: <Widget>[
+                                  Expanded(
+                                    child: _actionButton(
+                                      icon: Icons.route_rounded,
+                                      label: 'Directions',
+                                      filled: true,
                                     ),
                                   ),
-                                ),
-                                alignment: Alignment.center,
-                                child: const Icon(
-                                  Icons.storefront_rounded,
-                                  color: AppColors.primary,
-                                ),
-                              ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: selected == null
-                                  ? const Text(
-                                      'No places match this category.',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: AppColors.inkSoft,
-                                      ),
-                                    )
-                                  : Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          selected.categoryLabel,
-                                          style: const TextStyle(
-                                            fontSize: 11,
-                                            letterSpacing: 0.4,
-                                            fontWeight: FontWeight.w700,
-                                            color: AppColors.openGreen,
-                                          ),
-                                        ),
-                                        Text(
-                                          selected.name,
-                                          style: const TextStyle(
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.w700,
-                                            letterSpacing: -0.3,
-                                          ),
-                                        ),
-                                        Text(
-                                          selected.address,
-                                          style: const TextStyle(
-                                            fontSize: 13,
-                                            color: AppColors.inkSoft,
-                                          ),
-                                        ),
-                                      ],
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: _actionButton(
+                                      icon: Icons.call_outlined,
+                                      label: 'Call',
                                     ),
-                            ),
-                            if (selected != null)
-                              IconButton(
-                                onPressed: () {
-                                  final int sid = selectedId!;
-                                  setState(() {
-                                    if (_saved.contains(sid)) {
-                                      _saved.remove(sid);
-                                    } else {
-                                      _saved.add(sid);
-                                    }
-                                  });
-                                },
-                                icon: Icon(
-                                  isSaved
-                                      ? Icons.favorite_rounded
-                                      : Icons.favorite_border_rounded,
-                                  color: isSaved
-                                      ? AppColors.primary
-                                      : AppColors.inkSoft,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: _actionButton(
+                                      icon: Icons.share_outlined,
+                                      label: 'Share',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+                              OutlinedButton(
+                                onPressed: selectedId == null
+                                    ? null
+                                    : () =>
+                                          context.push('/business/$selectedId'),
+                                child: const Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: <Widget>[
+                                    Text('View details'),
+                                    SizedBox(width: 6),
+                                    Icon(Icons.chevron_right_rounded, size: 14),
+                                  ],
                                 ),
                               ),
-                          ],
-                        ),
-                        const SizedBox(height: 14),
-                        Row(
-                          children: <Widget>[
-                            Expanded(
-                              child: _actionButton(
-                                icon: Icons.route_rounded,
-                                label: 'Directions',
-                                filled: true,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: _actionButton(
-                                icon: Icons.call_outlined,
-                                label: 'Call',
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: _actionButton(
-                                icon: Icons.share_outlined,
-                                label: 'Share',
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        OutlinedButton(
-                          onPressed: selectedId == null
-                              ? null
-                              : () => context.push('/business/$selectedId'),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Text('View details'),
-                              SizedBox(width: 6),
-                              Icon(Icons.chevron_right_rounded, size: 14),
                             ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ),
                 ),
