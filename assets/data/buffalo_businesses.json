@@ -1,0 +1,690 @@
+{
+  "city": "Buffalo",
+  "state": "MN",
+  "country": "US",
+  "generatedFrom": "OpenStreetMap Overpass",
+  "businesses": [
+    {
+      "name": "J's Restaurant",
+      "category": "restaurant",
+      "address": {
+        "street": "Division Street East",
+        "line1": "22 Division Street East",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": "http://jsdownunderbar.com/",
+      "hours": null,
+      "location": {
+        "lat": 45.1717766,
+        "lng": -93.8753092
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 1
+    },
+    {
+      "name": "J'S Down Under Bar",
+      "category": "bar",
+      "address": {
+        "street": "Division Street East",
+        "line1": "22 Division Street East",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": "http://jsdownunderbar.com/",
+      "hours": null,
+      "location": {
+        "lat": 45.1717589,
+        "lng": -93.8753071
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 2
+    },
+    {
+      "name": "Rustic Arbor",
+      "category": "furniture",
+      "address": {
+        "street": "Central Avenue",
+        "line1": "10 Central Avenue",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": "Th-Sa 11:00-16:00, Th[1] 09:00-17:00; Fr[1] 09:00-17:00; Sa[1] 09:00-16:00, Su[1] 12:00-16:00",
+      "location": {
+        "lat": 45.172521,
+        "lng": -93.876083
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 3
+    },
+    {
+      "name": "The Cottage Door",
+      "category": "antiques",
+      "address": {
+        "street": "Central Avenue",
+        "line1": "32 Central Avenue",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1728951,
+        "lng": -93.875933
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 4
+    },
+    {
+      "name": "Behind the Picket Fence",
+      "category": "antiques",
+      "address": {
+        "street": "Central Avenue",
+        "line1": "32 Central Avenue",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1728824,
+        "lng": -93.8760685
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 5
+    },
+    {
+      "name": "A Wreath of Franklin",
+      "category": "furniture",
+      "address": {
+        "street": "Division Street East",
+        "line1": "11 Division Street East",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1721613,
+        "lng": -93.8757634
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 6
+    },
+    {
+      "name": "Lilliams",
+      "category": "clothes",
+      "address": {
+        "street": "Central Avenue",
+        "line1": "10 Central Avenue",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1724803,
+        "lng": -93.8760803
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 7
+    },
+    {
+      "name": "Bella's Flock",
+      "category": "art",
+      "address": {
+        "street": "Division Street East",
+        "line1": "11 Division Street East",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1721583,
+        "lng": -93.875677
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 8
+    },
+    {
+      "name": "JTB Home Furniture + Decor",
+      "category": "furniture",
+      "address": {
+        "street": "Division Street East",
+        "line1": "15 Division Street East",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1722399,
+        "lng": -93.8754947
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 9
+    },
+    {
+      "name": "Indie Earth",
+      "category": "music",
+      "address": {
+        "street": "Division Street East",
+        "line1": "15 Division Street East",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1721545,
+        "lng": -93.8754359
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 10
+    },
+    {
+      "name": "Sole Exposures Photography",
+      "category": "photo",
+      "address": {
+        "street": "Division Street East",
+        "line1": "2 Division Street East",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1719469,
+        "lng": -93.8761114
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 11
+    },
+    {
+      "name": "Salon Solera",
+      "category": "hairdresser",
+      "address": {
+        "street": "Division Street East",
+        "line1": "2 Division Street East",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1717624,
+        "lng": -93.8760306
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 12
+    },
+    {
+      "name": "Ritzy Replay",
+      "category": "clothes",
+      "address": {
+        "street": "1st Avenue South",
+        "line1": "8 1st Avenue South",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1717557,
+        "lng": -93.8746251
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 13
+    },
+    {
+      "name": "Freedom Mobility",
+      "category": "bicycle",
+      "address": {
+        "street": "1st Avenue South",
+        "line1": "8 1st Avenue South",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1717134,
+        "lng": -93.8744609
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 14
+    },
+    {
+      "name": "Hatcher Cycle",
+      "category": "bicycle",
+      "address": {
+        "street": "1st Avenue Northeast",
+        "line1": "4 1st Avenue Northeast",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": "+17634776959",
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1722394,
+        "lng": -93.8747063
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 15
+    },
+    {
+      "name": "Honey Mama Boutique",
+      "category": "clothes",
+      "address": {
+        "street": "1st Avenue Northeast",
+        "line1": "4 1st Avenue Northeast",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1723334,
+        "lng": -93.8747061
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 16
+    },
+    {
+      "name": "Greg's Barber Shop",
+      "category": "hairdresser",
+      "address": {
+        "street": "1st Avenue Northeast",
+        "line1": "24 1st Avenue Northeast",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1726804,
+        "lng": -93.8746691
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 17
+    },
+    {
+      "name": "Izzy's Formals",
+      "category": "clothes",
+      "address": {
+        "street": "Division Street East",
+        "line1": "11 Division Street East",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1721868,
+        "lng": -93.8759076
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 18
+    },
+    {
+      "name": "Buffalo Great River Regional Library",
+      "category": "library",
+      "address": {
+        "street": "Lake Boulevard Northwest",
+        "line1": "18 Lake Boulevard Northwest",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1726366,
+        "lng": -93.8774696
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 19
+    },
+    {
+      "name": "Lakeview Antiques & Collectibles",
+      "category": "antiques",
+      "address": {
+        "street": "",
+        "line1": "Buffalo, MN",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": ""
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1714387,
+        "lng": -93.8753921
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 20
+    },
+    {
+      "name": "Cuddigan",
+      "category": "leather",
+      "address": {
+        "street": "",
+        "line1": "Buffalo, MN",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": ""
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1721608,
+        "lng": -93.8755459
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 21
+    },
+    {
+      "name": "Buffalo Pizza",
+      "category": "restaurant",
+      "address": {
+        "street": "Minnesota Highway 55",
+        "line1": "405 Minnesota Highway 55",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": "https://buffalopizzamn.com/",
+      "hours": "Tu-Su 14:00-21:00; Fr,Sa 14:00-22:00",
+      "location": {
+        "lat": 45.1794529,
+        "lng": -93.8698219
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 22
+    },
+    {
+      "name": "Minnesota Lakes Bank",
+      "category": "bank",
+      "address": {
+        "street": "Minnesota Highway 55",
+        "line1": "215 Minnesota Highway 55",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1807163,
+        "lng": -93.8724416
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 23
+    },
+    {
+      "name": "Sakura",
+      "category": "restaurant",
+      "address": {
+        "street": "Commercial Drive",
+        "line1": "1008 Commercial Drive",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": "+1-763-777-9588",
+      "website": "https://www.sakurabuffalomn.com/",
+      "hours": "Mo off; Tu-Th 11:00-15:00,16:30-21:30; Fr-Su 11:00-21:30",
+      "location": {
+        "lat": 45.1846937,
+        "lng": -93.873612
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 24
+    },
+    {
+      "name": "The Brothers Cafe",
+      "category": "cafe",
+      "address": {
+        "street": "Commercial Drive",
+        "line1": "1006 Commercial Drive",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1838583,
+        "lng": -93.8737559
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 25
+    },
+    {
+      "name": "Moon Donuts & Cafe",
+      "category": "pastry",
+      "address": {
+        "street": "Minnesota Highway 55",
+        "line1": "9 Minnesota Highway 55",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1841305,
+        "lng": -93.8780457
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 26
+    },
+    {
+      "name": "Aloha",
+      "category": "restaurant",
+      "address": {
+        "street": "Minnesota Highway 55",
+        "line1": "11 Minnesota Highway 55",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1841775,
+        "lng": -93.8781302
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 27
+    },
+    {
+      "name": "Subway",
+      "category": "fast_food",
+      "address": {
+        "street": "Soo Lane",
+        "line1": "701 Soo Lane",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": "+1 763-682-1819",
+      "website": "https://restaurants.subway.com/united-states/mn/buffalo/701-soo-lane",
+      "hours": "Mo-Sa 08:30-22:00; Su 09:00-21:00",
+      "location": {
+        "lat": 45.1789129,
+        "lng": -93.8726322
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 28
+    },
+    {
+      "name": "Jimmy John's",
+      "category": "fast_food",
+      "address": {
+        "street": "Crossroads Campus Drive",
+        "line1": "606 Crossroads Campus Drive",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": "+1 763-276-1118",
+      "website": "https://locations.jimmyjohns.com/mn/buffalo/sandwiches-1153.html",
+      "hours": null,
+      "location": {
+        "lat": 45.1783673,
+        "lng": -93.8669709
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 29
+    },
+    {
+      "name": "Nautical Bowls",
+      "category": "fast_food",
+      "address": {
+        "street": "Crossroads Campus Drive",
+        "line1": "606 Crossroads Campus Drive",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": null,
+      "phone": null,
+      "website": null,
+      "hours": null,
+      "location": {
+        "lat": 45.1782196,
+        "lng": -93.8666085
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap",
+      "id": 30
+    },
+    {
+      "id": 31,
+      "name": "Biggs & Co",
+      "category": "clothes",
+      "address": {
+        "street": "Division Street East",
+        "line1": "105 Division Street East",
+        "city": "Buffalo",
+        "state": "MN",
+        "postalCode": "55313"
+      },
+      "owner": "Family-owned",
+      "phone": "+1-763-682-6820",
+      "website": "https://www.biggsandcompany.com/",
+      "hours": null,
+      "location": {
+        "lat": 45.1721809,
+        "lng": -93.8744286
+      },
+      "storefrontImage": "https://cdn.pixabay.com/photo/2013/07/12/13/57/shop-147483_1280.png",
+      "source": "OpenStreetMap + biggsandcompany.com"
+    }
+  ]
+}

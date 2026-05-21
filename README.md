@@ -32,9 +32,35 @@ Before first iOS debug session, run `tool/sync_secrets.ps1` (or `.sh`) so `ios/F
 
 Android reads `.env` directly via Gradle each build.
 
+## Admin website (React + Vite)
+
+A lightweight admin UI is available in `admin/` for editing Firestore business records.
+
+1. `cd admin`
+2. `cp .env.example .env.local` and fill Firebase web config values for project `shopsfirebase-a92b0`
+3. `npm install`
+4. `npm run dev`
+
+Notes:
+- Sign in with the same Firebase email/password used by the app.
+- The site edits documents in Firestore collection `businesses`.
+- If your account is unverified, verify email first (same behavior as app auth flow).
+
 ## Codemagic
 
 `codemagic.yaml` expects these environment variables:
 `GOOGLE_MAPS_API_KEY_ANDROID`, `GOOGLE_MAPS_API_KEY_IOS`, `FIREBASE_API_KEY`, `FIREBASE_APP_ID`, `FIREBASE_MESSAGING_SENDER_ID`, `FIREBASE_PROJECT_ID`, `FIREBASE_AUTH_DOMAIN`, `FIREBASE_STORAGE_BUCKET`, `FIREBASE_IOS_BUNDLE_ID`.
 
 CI writes `.env` at build time, generates iOS xcconfig, runs tests, and builds Android APK.
+
+## Buffalo business dataset + Firestore seed
+
+- Dataset file: `assets/data/buffalo_businesses.json` (31 Buffalo, MN businesses).
+- App map/list/detail screens load from this JSON file.
+- To seed/reseed Firestore from this file:
+  1. `cd tool && npm install`
+  2. Enable the **Cloud Firestore API** for your Google Cloud project (one-time setup).
+  3. Authenticate for Application Default Credentials (`gcloud auth application-default login`) or set `GOOGLE_APPLICATION_CREDENTIALS`.
+  4. Ensure a Firestore database exists (first-time only): `gcloud firestore databases create --database='(default)' --location=us-central1 --type=firestore-native --project=shopsfirebase-a92b0`
+  5. From repo root: `FIREBASE_PROJECT_ID=shopsfirebase-a92b0 node tool/seed_businesses_firestore.mjs`
+  6. Optional: set `FIRESTORE_COLLECTION` to override default collection name (`businesses`).
