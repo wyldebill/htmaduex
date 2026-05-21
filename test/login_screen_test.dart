@@ -121,7 +121,7 @@ void main() {
     TestWidgetsFlutterBinding.ensureInitialized();
   });
 
-  testWidgets('successful sign in navigates to onboarding', (
+  testWidgets('sign in skips onboarding when already seen', (
     WidgetTester tester,
   ) async {
     tester.view.physicalSize = const Size(1170, 2532);
@@ -132,44 +132,44 @@ void main() {
       tester.view.resetViewInsets();
     });
 
-    testWidgets('sign in skips onboarding when already seen', (
-      WidgetTester tester,
-    ) async {
-      tester.view.physicalSize = const Size(1170, 2532);
-      tester.view.devicePixelRatio = 3.0;
-      addTearDown(() {
-        tester.view.resetPhysicalSize();
-        tester.view.resetDevicePixelRatio();
-        tester.view.resetViewInsets();
-      });
-
-      final GoRouter router = GoRouter(
-        initialLocation: '/login',
-        routes: <RouteBase>[
-          GoRoute(
-            path: '/login',
-            builder: (BuildContext context, GoRouterState state) => LoginScreen(
-              authService: _FakeAuthService(hasSeenOnboarding: true),
-            ),
+    final GoRouter router = GoRouter(
+      initialLocation: '/login',
+      routes: <RouteBase>[
+        GoRoute(
+          path: '/login',
+          builder: (BuildContext context, GoRouterState state) => LoginScreen(
+            authService: _FakeAuthService(hasSeenOnboarding: true),
           ),
-          GoRoute(
-            path: '/map',
-            builder: (BuildContext context, GoRouterState state) =>
-                const Scaffold(body: Center(child: Text('Map page'))),
-          ),
-        ],
-      );
+        ),
+        GoRoute(
+          path: '/map',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Scaffold(body: Center(child: Text('Map page'))),
+        ),
+      ],
+    );
 
-      await tester.pumpWidget(
-        MaterialApp.router(theme: appTheme, routerConfig: router),
-      );
+    await tester.pumpWidget(
+      MaterialApp.router(theme: appTheme, routerConfig: router),
+    );
 
-      await tester.enterText(find.byType(TextField).at(0), 'user@example.com');
-      await tester.enterText(find.byType(TextField).at(1), 'secret123');
-      await tester.tap(find.widgetWithText(ElevatedButton, 'Sign in'));
-      await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField).at(0), 'user@example.com');
+    await tester.enterText(find.byType(TextField).at(1), 'secret123');
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Sign in'));
+    await tester.pumpAndSettle();
 
-      expect(find.text('Map page'), findsOneWidget);
+    expect(find.text('Map page'), findsOneWidget);
+  });
+
+  testWidgets('successful sign in navigates to onboarding', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(1170, 2532);
+    tester.view.devicePixelRatio = 3.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+      tester.view.resetViewInsets();
     });
 
     final GoRouter router = GoRouter(
