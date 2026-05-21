@@ -10,6 +10,10 @@ abstract class AuthService {
   Future<void> signOut();
 
   Future<void> resendVerification();
+
+  Future<void> markOnboardingSeen();
+
+  Future<bool> hasSeenOnboarding();
 }
 
 class FirebaseAuthService implements AuthService {
@@ -121,6 +125,48 @@ class FirebaseAuthService implements AuthService {
     }
 
     await user.sendEmailVerification();
+  }
+
+  @override
+  Future<void> markOnboardingSeen() async {
+    final User? user = _auth.currentUser;
+    if (user == null) {
+      throw FirebaseAuthException(
+        code: 'no-user',
+        message: 'No active user to mark onboarding status.',
+      );
+    }
+    try {
+      await _verificationStatusStore.markOnboardingSeen(uid: user.uid);
+    } on FirebaseException catch (e) {
+      throw FirebaseAuthException(
+        code: 'onboarding-status-sync-failed',
+        message:
+            'Unable to save onboarding status right now. ${e.message ?? ''}'
+                .trim(),
+      );
+    }
+  }
+
+  @override
+  Future<bool> hasSeenOnboarding() async {
+    final User? user = _auth.currentUser;
+    if (user == null) {
+      throw FirebaseAuthException(
+        code: 'no-user',
+        message: 'No active user to read onboarding status.',
+      );
+    }
+    try {
+      return await _verificationStatusStore.hasSeenOnboarding(uid: user.uid);
+    } on FirebaseException catch (e) {
+      throw FirebaseAuthException(
+        code: 'onboarding-status-sync-failed',
+        message:
+            'Unable to read onboarding status right now. ${e.message ?? ''}'
+                .trim(),
+      );
+    }
   }
 
   Future<void> _markPendingVerification(

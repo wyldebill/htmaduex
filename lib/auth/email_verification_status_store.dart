@@ -7,6 +7,10 @@ abstract class EmailVerificationStatusStore {
   });
 
   Future<void> markVerified({required String uid});
+
+  Future<void> markOnboardingSeen({required String uid});
+
+  Future<bool> hasSeenOnboarding({required String uid});
 }
 
 class FirestoreEmailVerificationStatusStore
@@ -37,5 +41,22 @@ class FirestoreEmailVerificationStatusStore
       'emailVerificationPending': false,
       'updatedAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
+  }
+
+  @override
+  Future<void> markOnboardingSeen({required String uid}) async {
+    await _userStateDoc(uid).set(<String, dynamic>{
+      'hasSeenOnboarding': true,
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
+
+  @override
+  Future<bool> hasSeenOnboarding({required String uid}) async {
+    final DocumentSnapshot<Map<String, dynamic>> snapshot = await _userStateDoc(
+      uid,
+    ).get();
+    final Object? value = snapshot.data()?['hasSeenOnboarding'];
+    return value == true;
   }
 }

@@ -156,10 +156,7 @@ final ThemeData appTheme = ThemeData(
         letterSpacing: 0.4,
       ),
     ),
-  ).apply(
-    bodyColor: AppColors.ink,
-    displayColor: AppColors.ink,
-  ),
+  ).apply(bodyColor: AppColors.ink, displayColor: AppColors.ink),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: AppColors.primary,
@@ -283,12 +280,12 @@ class AppShadows {
   ];
 
   static List<BoxShadow> primaryButton(Color primary) => [
-        BoxShadow(
-          color: primary.withValues(alpha: 0.35),
-          blurRadius: 24,
-          offset: const Offset(0, 10),
-        ),
-      ];
+    BoxShadow(
+      color: primary.withValues(alpha: 0.35),
+      blurRadius: 24,
+      offset: const Offset(0, 10),
+    ),
+  ];
 
   static const List<BoxShadow> mapControl = [
     BoxShadow(color: Color(0x1A000000), blurRadius: 12, offset: Offset(0, 4)),

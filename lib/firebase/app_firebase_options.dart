@@ -97,8 +97,9 @@ class AppFirebaseOptions {
       return generated.DefaultFirebaseOptions.currentPlatform;
     } catch (e) {
       throw StateError(
-          'Native Firebase config is missing or invalid, and no FlutterFire-generated configuration is available.\n'
-          'For native builds provide secrets via a local .env and run tool/sync_secrets.ps1 (or sync_secrets.sh), or run the FlutterFire CLI to generate firebase_options.dart.');
+        'Native Firebase config is missing or invalid, and no FlutterFire-generated configuration is available.\n'
+        'For native builds provide secrets via a local .env and run tool/sync_secrets.ps1 (or sync_secrets.sh), or run the FlutterFire CLI to generate firebase_options.dart.',
+      );
     }
   }
 }

@@ -6,6 +6,7 @@ import 'firebase/app_firebase_options.dart';
 import 'screens/detail_screen.dart';
 import 'screens/list_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/profile_screen.dart';
 import 'screens/verification_screen.dart';
 import 'screens/map_screen.dart';
 import 'screens/wizard_screen.dart';
@@ -51,6 +52,11 @@ final GoRouter _router = GoRouter(
           const ListScreen(),
     ),
     GoRoute(
+      path: '/profile',
+      builder: (BuildContext context, GoRouterState state) =>
+          const ProfileScreen(),
+    ),
+    GoRoute(
       path: '/business/:id',
       builder: (BuildContext context, GoRouterState state) {
         final int id = int.tryParse(state.pathParameters['id'] ?? '') ?? 1;
@@ -59,7 +65,6 @@ final GoRouter _router = GoRouter(
     ),
   ],
 );
-
 
 class NearbyApp extends StatelessWidget {
   const NearbyApp({super.key});

@@ -8,25 +8,41 @@ import '../models/business.dart';
 import '../theme/app_theme.dart';
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  final Future<List<Business>>? businessesFuture;
+  final bool initialSelected;
+  final bool? mapSupportedOverride;
+  const MapScreen({
+    super.key,
+    this.businessesFuture,
+    this.initialSelected = true,
+    this.mapSupportedOverride,
+  });
 
   @override
   State<MapScreen> createState() => _MapScreenState();
 }
 
 class _MapScreenState extends State<MapScreen> {
-  late final Future<List<Business>> _businessesFuture =
-      BusinessRepository.loadBusinesses();
-  int _selectedId = 1;
+  late Future<List<Business>> _businessesFuture;
+  int? _selectedId;
   String _category = 'All';
   final Set<int> _saved = <int>{2, 5};
 
   @override
+  void initState() {
+    super.initState();
+    _businessesFuture =
+        widget.businessesFuture ?? BusinessRepository.loadBusinesses();
+    _selectedId = widget.initialSelected ? 1 : null;
+  }
+
+  @override
   Widget build(BuildContext context) {
     final bool mapSupported =
-        kIsWeb ||
-        defaultTargetPlatform == TargetPlatform.android ||
-        defaultTargetPlatform == TargetPlatform.iOS;
+        widget.mapSupportedOverride ??
+        (kIsWeb ||
+            defaultTargetPlatform == TargetPlatform.android ||
+            defaultTargetPlatform == TargetPlatform.iOS);
     return FutureBuilder<List<Business>>(
       future: _businessesFuture,
       builder: (BuildContext context, AsyncSnapshot<List<Business>> snapshot) {
@@ -52,13 +68,20 @@ class _MapScreenState extends State<MapScreen> {
             : items
                   .where((Business item) => item.categoryLabel == _category)
                   .toList();
-        final Business? selected = filtered.isEmpty
-            ? null
-            : filtered.firstWhere(
-                (Business item) => item.id == _selectedId,
-                orElse: () => filtered.first,
-              );
+        final Business? selected;
+        if (filtered.isEmpty) {
+          selected = null;
+        } else if (_selectedId == null) {
+          selected = null;
+        } else {
+          final matches = filtered.where(
+            (Business item) => item.id == _selectedId,
+          );
+          selected = matches.isEmpty ? filtered.first : matches.first;
+        }
         final Business mapCenter = selected ?? items.first;
+        final int? selectedId = selected?.id;
+        final bool isSaved = selectedId != null && _saved.contains(selectedId);
 
         return Scaffold(
           body: Stack(
@@ -310,19 +333,20 @@ class _MapScreenState extends State<MapScreen> {
                             if (selected != null)
                               IconButton(
                                 onPressed: () {
+                                  final int sid = selectedId!;
                                   setState(() {
-                                    if (_saved.contains(selected.id)) {
-                                      _saved.remove(selected.id);
+                                    if (_saved.contains(sid)) {
+                                      _saved.remove(sid);
                                     } else {
-                                      _saved.add(selected.id);
+                                      _saved.add(sid);
                                     }
                                   });
                                 },
                                 icon: Icon(
-                                  _saved.contains(selected.id)
+                                  isSaved
                                       ? Icons.favorite_rounded
                                       : Icons.favorite_border_rounded,
-                                  color: _saved.contains(selected.id)
+                                  color: isSaved
                                       ? AppColors.primary
                                       : AppColors.inkSoft,
                                 ),
@@ -357,9 +381,9 @@ class _MapScreenState extends State<MapScreen> {
                         ),
                         const SizedBox(height: 12),
                         OutlinedButton(
-                          onPressed: selected == null
+                          onPressed: selectedId == null
                               ? null
-                              : () => context.push('/business/${selected.id}'),
+                              : () => context.push('/business/$selectedId'),
                           child: const Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: <Widget>[
@@ -381,6 +405,7 @@ class _MapScreenState extends State<MapScreen> {
             onDestinationSelected: (int i) {
               if (i == 0) context.go('/map');
               if (i == 1) context.go('/list');
+              if (i == 3) context.go('/profile');
             },
             destinations: const <NavigationDestination>[
               NavigationDestination(

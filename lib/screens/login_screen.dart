@@ -49,7 +49,9 @@ class _LoginScreenState extends State<LoginScreen> {
       if (_signInMode) {
         await _authService.signIn(email: email, password: password);
         if (!mounted) return;
-        context.go('/onboarding');
+        final bool hasSeenOnboarding = await _authService.hasSeenOnboarding();
+        if (!mounted) return;
+        context.go(hasSeenOnboarding ? '/map' : '/onboarding');
       } else {
         await _authService.signUp(email: email, password: password);
         if (!mounted) return;
@@ -224,8 +226,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onPressed: _isSubmitting
                                       ? null
                                       : () => _showNotImplementedMessage(
-                                        'Forgot password',
-                                      ),
+                                          'Forgot password',
+                                        ),
                                   style: TextButton.styleFrom(
                                     padding: EdgeInsets.zero,
                                     minimumSize: Size.zero,
@@ -304,10 +306,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onPressed: _isSubmitting
                                       ? null
                                       : () => _showNotImplementedMessage(
-                                        _signInMode
-                                            ? 'Google sign in'
-                                            : 'Google sign up',
-                                      ),
+                                          _signInMode
+                                              ? 'Google sign in'
+                                              : 'Google sign up',
+                                        ),
                                   icon: const Icon(
                                     Icons.g_mobiledata_rounded,
                                     size: 22,
@@ -321,10 +323,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onPressed: _isSubmitting
                                       ? null
                                       : () => _showNotImplementedMessage(
-                                        _signInMode
-                                            ? 'Apple sign in'
-                                            : 'Apple sign up',
-                                      ),
+                                          _signInMode
+                                              ? 'Apple sign in'
+                                              : 'Apple sign up',
+                                        ),
                                   icon: const Icon(Icons.apple_rounded),
                                   label: const Text('Apple'),
                                 ),
