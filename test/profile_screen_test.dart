@@ -35,6 +35,9 @@ class _FakeAuthService implements AuthService {
 
   @override
   Future<void> markOnboardingSeen() async {}
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {}
 }
 
 void main() {

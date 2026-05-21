@@ -36,6 +36,9 @@ class _NoUserAuthService implements AuthService {
 
   @override
   Future<void> markOnboardingSeen() async {}
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {}
 }
 
 class _TooManyRequestsResendAuthService implements AuthService {
@@ -67,6 +70,9 @@ class _TooManyRequestsResendAuthService implements AuthService {
 
   @override
   Future<void> markOnboardingSeen() async {}
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {}
 }
 
 void main() {

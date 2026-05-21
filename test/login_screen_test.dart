@@ -58,6 +58,9 @@ class _FakeAuthService implements AuthService {
 
   @override
   Future<void> markOnboardingSeen() async {}
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {}
 }
 
 class _DelayedSignUpAuthService implements AuthService {
@@ -85,6 +88,9 @@ class _DelayedSignUpAuthService implements AuthService {
 
   @override
   Future<void> markOnboardingSeen() async {}
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {}
 }
 
 class _TooManyRequestsAuthService implements AuthService {
@@ -114,6 +120,9 @@ class _TooManyRequestsAuthService implements AuthService {
 
   @override
   Future<void> markOnboardingSeen() async {}
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {}
 }
 
 void main() {

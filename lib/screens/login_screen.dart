@@ -101,6 +101,71 @@ class _LoginScreenState extends State<LoginScreen> {
     _showMessage('$feature is not implemented yet.');
   }
 
+  Future<void> _showPasswordResetDialog() async {
+    final TextEditingController emailController = TextEditingController(
+      text: _usernameController.text.trim(),
+    );
+    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+
+    String? validateEmail(String? value) {
+      if (value == null || value.trim().isEmpty) {
+        return 'Enter your email.';
+      }
+      final RegExp emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
+      if (!emailRegex.hasMatch(value.trim())) {
+        return 'Enter a valid email address.';
+      }
+      return null;
+    }
+
+    await showDialog<void>(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: const Text('Reset password'),
+          content: Form(
+            key: formKey,
+            child: TextFormField(
+              controller: emailController,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                hintText: 'you@example.com',
+              ),
+              validator: validateEmail,
+              keyboardType: TextInputType.emailAddress,
+              autofillHints: const [AutofillHints.email],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (formKey.currentState?.validate() != true) return;
+                final String email = emailController.text.trim();
+                Navigator.of(ctx).pop();
+                try {
+                  await _authService.sendPasswordResetEmail(email);
+                  if (!mounted) return;
+                  _showMessage('Password reset email sent. Check your inbox.');
+                } on FirebaseAuthException catch (e) {
+                  if (!mounted) return;
+                  _showMessage(e.message ?? 'Failed to send reset email.');
+                } catch (e) {
+                  if (!mounted) return;
+                  _showMessage('Failed to send reset email.');
+                }
+              },
+              child: const Text('Send'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -225,9 +290,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: TextButton(
                                   onPressed: _isSubmitting
                                       ? null
-                                      : () => _showNotImplementedMessage(
-                                          'Forgot password',
-                                        ),
+                                      : () => _showPasswordResetDialog(),
                                   style: TextButton.styleFrom(
                                     padding: EdgeInsets.zero,
                                     minimumSize: Size.zero,
@@ -235,7 +298,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         MaterialTapTargetSize.shrinkWrap,
                                   ),
                                   child: Text(
-                                    'Forgot?',
+                                    'Forgot password?',
                                     style: TextStyle(
                                       color: AppColors.primary,
                                       fontWeight: FontWeight.w600,

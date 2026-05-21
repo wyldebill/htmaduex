@@ -14,6 +14,9 @@ abstract class AuthService {
   Future<void> markOnboardingSeen();
 
   Future<bool> hasSeenOnboarding();
+
+  /// Sends a password reset email to the given address using Firebase Auth.
+  Future<void> sendPasswordResetEmail(String email);
 }
 
 class FirebaseAuthService implements AuthService {
@@ -125,6 +128,24 @@ class FirebaseAuthService implements AuthService {
     }
 
     await user.sendEmailVerification();
+  }
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email.trim());
+    } on FirebaseAuthException catch (e) {
+      // Surface friendly FirebaseAuthException to callers
+      throw FirebaseAuthException(
+        code: e.code,
+        message: e.message ?? 'Failed to send password reset email.',
+      );
+    } catch (e) {
+      throw FirebaseAuthException(
+        code: 'password-reset-failed',
+        message: e.toString(),
+      );
+    }
   }
 
   @override
