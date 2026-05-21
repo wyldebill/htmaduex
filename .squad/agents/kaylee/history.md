@@ -8,3 +8,5 @@
 ## Learnings
 
 Initialized as Frontend Dev for Flutter UI and map-facing experiences.
+
+- Cleared username and password TextEditingController values and unfocused input when toggling between Sign in and Sign up to avoid leaking input between modes and to improve UX when switching forms.

@@ -52,6 +52,19 @@
 
 ---
 
+### 2026-05-21T07:54:32.710-05:00: Clear login fields on mode toggle
+**By:** Kaylee (Frontend Dev)
+**What:** When toggling between Sign in and Sign up, clear the username and password fields and unfocus any active input.
+
+**Rationale:**
+- Prevent stale credential leakage between modes and avoid accidental submissions.
+- Provide a clean form state when switching modes for better UX.
+
+**Actions:**
+- Updated lib/screens/login_screen.dart to call FocusScope.of(context).unfocus() and clear both TextEditingController instances inside the same setState call that flips _signInMode.
+
+---
+
 ## Archive (decisions older than 30 days)
 
 *None yet*

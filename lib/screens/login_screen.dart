@@ -447,9 +447,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               TextButton(
                                 onPressed: _isSubmitting
                                     ? null
-                                    : () => setState(
-                                        () => _signInMode = !_signInMode,
-                                      ),
+                                    : () {
+                                        FocusScope.of(context).unfocus();
+                                        setState(() {
+                                          _signInMode = !_signInMode;
+                                          _usernameController.clear();
+                                          _passwordController.clear();
+                                        });
+                                      },
                                 child: Text(
                                   _signInMode ? 'Sign up' : 'Sign in',
                                   style: const TextStyle(
