@@ -25,6 +25,8 @@ class FirebaseAuthService implements AuthService {
 
   static const Duration _verificationWindow = Duration(days: 7);
 
+  static const Duration _verificationWindow = Duration(days: 7);
+
   @override
   Future<void> signIn({required String email, required String password}) async {
     final UserCredential cred = await _auth.signInWithEmailAndPassword(
