@@ -118,49 +118,82 @@ class _LoginScreenState extends State<LoginScreen> {
       return null;
     }
 
-    await showDialog<void>(
+    await showModalBottomSheet<void>(
       context: context,
+      isScrollControlled: true,
       builder: (BuildContext ctx) {
-        return AlertDialog(
-          title: const Text('Reset password'),
-          content: Form(
-            key: formKey,
-            child: TextFormField(
-              controller: emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                hintText: 'you@example.com',
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(ctx).viewInsets.bottom,
+          ),
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+              child: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      'Reset password',
+                      style: Theme.of(ctx).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 12),
+                    TextFormField(
+                      controller: emailController,
+                      decoration: const InputDecoration(
+                        labelText: 'Email',
+                        hintText: 'you@example.com',
+                      ),
+                      validator: validateEmail,
+                      keyboardType: TextInputType.emailAddress,
+                      autofillHints: const [AutofillHints.email],
+                      autofocus: true,
+                    ),
+                    const SizedBox(height: 18),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        TextButton(
+                          onPressed: () => Navigator.of(ctx).pop(),
+                          child: const Text('Cancel'),
+                        ),
+                        const SizedBox(width: 8),
+                        ElevatedButton(
+                          onPressed: () async {
+                            if (formKey.currentState?.validate() != true) {
+                              return;
+                            }
+                            final String email = emailController.text.trim();
+                            Navigator.of(ctx).pop();
+                            try {
+                              await _authService.sendPasswordResetEmail(email);
+                              if (!mounted) return;
+                              _showMessage(
+                                'Password reset email sent. Check your inbox.',
+                              );
+                            } on FirebaseAuthException catch (e) {
+                              if (!mounted) return;
+                              _showMessage(
+                                e.message ?? 'Failed to send reset email.',
+                              );
+                            } catch (_) {
+                              if (!mounted) {
+                                return;
+                              }
+                              _showMessage('Failed to send reset email.');
+                            }
+                          },
+                          child: const Text('Send'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-              validator: validateEmail,
-              keyboardType: TextInputType.emailAddress,
-              autofillHints: const [AutofillHints.email],
             ),
           ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                if (formKey.currentState?.validate() != true) return;
-                final String email = emailController.text.trim();
-                Navigator.of(ctx).pop();
-                try {
-                  await _authService.sendPasswordResetEmail(email);
-                  if (!mounted) return;
-                  _showMessage('Password reset email sent. Check your inbox.');
-                } on FirebaseAuthException catch (e) {
-                  if (!mounted) return;
-                  _showMessage(e.message ?? 'Failed to send reset email.');
-                } catch (e) {
-                  if (!mounted) return;
-                  _showMessage('Failed to send reset email.');
-                }
-              },
-              child: const Text('Send'),
-            ),
-          ],
         );
       },
     );
