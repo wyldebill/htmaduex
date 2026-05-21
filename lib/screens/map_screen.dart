@@ -214,28 +214,6 @@ class _MapScreenState extends State<MapScreen> {
                   ],
                 ),
               ),
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: 228,
-                child: Center(
-                  child: ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.ink,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 18,
-                        vertical: 10,
-                      ),
-                    ),
-                    onPressed: () => context.go('/list'),
-                    icon: const Icon(Icons.list_rounded, size: 16),
-                    label: const Text('List view'),
-                  ),
-                ),
-              ),
               AnimatedSlide(
                 offset: selected == null ? const Offset(0, 1) : Offset.zero,
                 duration: const Duration(milliseconds: 300),
