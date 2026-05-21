@@ -456,4 +456,31 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets('clears fields when toggling sign in and sign up', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(1170, 2532);
+    tester.view.devicePixelRatio = 3.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+      tester.view.resetViewInsets();
+    });
+
+    await tester.pumpWidget(MaterialApp(home: LoginScreen(authService: _FakeAuthService())));
+
+    // enter text into username and password
+    await tester.enterText(find.byType(TextField).at(0), 'user@example.com');
+    await tester.enterText(find.byType(TextField).at(1), 'secret123');
+    await tester.pump();
+
+    // toggle to sign up
+    await tester.tap(find.widgetWithText(TextButton, 'Sign up'));
+    await tester.pumpAndSettle();
+
+    // assert fields are cleared
+    final TextField username = tester.widget(find.byType(TextField).at(0));
+    final TextField password = tester.widget(find.byType(TextField).at(1));
+    expect(username.controller?.text, isEmpty);
+    expect(password.controller?.text, isEmpty);
+  });
 }
