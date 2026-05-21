@@ -37,14 +37,11 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp.router(
-          theme: appTheme,
-          routerConfig: router,
-        ),
+        MaterialApp.router(theme: appTheme, routerConfig: router),
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Driftwood Coffee').first);
+      await tester.tap(find.text("J's Restaurant").first);
       await tester.pumpAndSettle();
 
       expect(find.text('Book a table'), findsOneWidget);

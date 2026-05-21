@@ -37,7 +37,7 @@ function Read-OptionalSecret([string]$Name) {
   return ($line -split "=", 2)[1].Trim().Trim('"').Trim("'")
 }
 
-$apiKey = Read-RequiredSecret "GOOGLE_MAPS_API_KEY"
+$apiKeyIos = Read-RequiredSecret "GOOGLE_MAPS_API_KEY_IOS"
 $firebaseApiKey = Read-OptionalSecret "FIREBASE_API_KEY"
 $firebaseAppId = Read-OptionalSecret "FIREBASE_APP_ID"
 $firebaseSenderId = Read-OptionalSecret "FIREBASE_MESSAGING_SENDER_ID"
@@ -49,7 +49,7 @@ $firebaseIosBundleId = Read-OptionalSecret "FIREBASE_IOS_BUNDLE_ID"
 $target = Join-Path $repoRoot "ios/Flutter/Secrets.xcconfig"
 # iOS build settings require this file before compile, so we generate it from local env.
 $lines = @(
-  "GOOGLE_MAPS_API_KEY=$apiKey"
+  "GOOGLE_MAPS_API_KEY_IOS=$apiKeyIos"
   "FIREBASE_API_KEY=$firebaseApiKey"
   "FIREBASE_APP_ID=$firebaseAppId"
   "FIREBASE_MESSAGING_SENDER_ID=$firebaseSenderId"

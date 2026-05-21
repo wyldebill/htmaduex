@@ -18,6 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _signInMode = true;
+  bool _isSubmitting = false;
   late final AuthService _authService;
 
   @override
@@ -34,6 +35,8 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _continue() async {
+    if (_isSubmitting) return;
+
     final String email = _usernameController.text.trim();
     final String password = _passwordController.text;
     if (email.isEmpty || password.isEmpty) {
@@ -41,37 +44,72 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
+    setState(() => _isSubmitting = true);
     try {
       if (_signInMode) {
         await _authService.signIn(email: email, password: password);
+        if (!mounted) return;
+        context.go('/onboarding');
       } else {
         await _authService.signUp(email: email, password: password);
+        if (!mounted) return;
+        // After signup we send verification and route to verification flow
+        context.go('/verify');
       }
-      if (!mounted) return;
-      context.go('/onboarding');
     } on FirebaseAuthException catch (e) {
-      _showMessage(e.message ?? 'Authentication failed.');
+      // Handle specific verification related errors
+      if (e.code == 'email-not-verified') {
+        if (!mounted) return;
+        // Route to verification UI
+        context.go('/verify');
+        return;
+      }
+      if (e.code == 'email-not-verified-expired') {
+        _showMessage(
+          e.message ??
+              'Verification window expired. Please create a new account.',
+        );
+        return;
+      }
+
+      _showMessage(_friendlyAuthMessage(e));
     } catch (_) {
       _showMessage('Authentication failed.');
+    } finally {
+      if (mounted) {
+        setState(() => _isSubmitting = false);
+      }
     }
   }
 
+  String _friendlyAuthMessage(FirebaseAuthException exception) {
+    if (exception.code == 'too-many-requests') {
+      return 'Too many attempts from this device. Please wait a bit and try again.';
+    }
+    return exception.message ?? 'Authentication failed.';
+  }
+
   void _showMessage(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    final ScaffoldMessengerState messenger = ScaffoldMessenger.of(context);
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  void _showNotImplementedMessage(String feature) {
+    _showMessage('$feature is not implemented yet.');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Column(
         children: <Widget>[
           Expanded(
-            flex: 4,
+            flex: 3,
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(28, 72, 28, 32),
+              padding: const EdgeInsets.fromLTRB(28, 56, 28, 20),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topRight,
@@ -112,7 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           const SizedBox(width: 10),
                           const Text(
-                            'Nearby',
+                            'HTMAr',
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w700,
@@ -121,14 +159,16 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 28),
+                      const SizedBox(height: 18),
                       Text(
                         _signInMode
                             ? 'Welcome back.'
                             : 'Make the neighborhood yours.',
                         style: Theme.of(context).textTheme.displayLarge,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 6),
                       Text(
                         _signInMode
                             ? 'Sign in to pick up where you left off.'
@@ -136,6 +176,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           color: AppColors.inkSoft,
                         ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
@@ -144,119 +186,188 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           Expanded(
-            flex: 6,
+            flex: 7,
             child: SafeArea(
               top: false,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
-                child: Column(
-                  children: <Widget>[
-                    _field(
-                      label: 'Username',
-                      controller: _usernameController,
-                      hint: 'you@example.com',
-                      obscureText: false,
-                    ),
-                    _field(
-                      label: 'Password',
-                      controller: _passwordController,
-                      hint: '••••••••',
-                      obscureText: true,
-                    ),
-                    if (_signInMode)
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 2, bottom: 14),
-                          child: Text(
-                            'Forgot?',
-                            style: TextStyle(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
+              child: LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+                  return SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(24, 12, 24, 20),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight - 20,
                       ),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () => _continue(),
-                        child: Text(_signInMode ? 'Sign in' : 'Create account'),
-                      ),
-                    ),
-                    const SizedBox(height: 22),
-                    Row(
-                      children: <Widget>[
-                        const Expanded(child: Divider()),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: Text(
-                            'OR',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: AppColors.inkFaint,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 0.6,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          _field(
+                            label: 'Username',
+                            controller: _usernameController,
+                            hint: 'you@example.com',
+                            obscureText: false,
+                          ),
+                          _field(
+                            label: 'Password',
+                            controller: _passwordController,
+                            hint: '••••••••',
+                            obscureText: true,
+                          ),
+                          if (_signInMode)
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                  top: 2,
+                                  bottom: 14,
+                                ),
+                                child: TextButton(
+                                  onPressed: _isSubmitting
+                                      ? null
+                                      : () => _showNotImplementedMessage(
+                                        'Forgot password',
+                                      ),
+                                  style: TextButton.styleFrom(
+                                    padding: EdgeInsets.zero,
+                                    minimumSize: Size.zero,
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                  child: Text(
+                                    'Forgot?',
+                                    style: TextStyle(
+                                      color: AppColors.primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              onPressed: _isSubmitting
+                                  ? null
+                                  : () => _continue(),
+                              child: _isSubmitting
+                                  ? Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        const SizedBox(
+                                          width: 16,
+                                          height: 16,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2.2,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Text(
+                                          _signInMode
+                                              ? 'Signing in...'
+                                              : 'Creating...',
+                                        ),
+                                      ],
+                                    )
+                                  : Text(
+                                      _signInMode
+                                          ? 'Sign in'
+                                          : 'Create account',
+                                    ),
                             ),
                           ),
-                        ),
-                        const Expanded(child: Divider()),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: () => _continue(),
-                            icon: const Icon(
-                              Icons.g_mobiledata_rounded,
-                              size: 22,
-                            ),
-                            label: const Text('Google'),
+                          const SizedBox(height: 22),
+                          Row(
+                            children: <Widget>[
+                              const Expanded(child: Divider()),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                                child: Text(
+                                  'OR',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: AppColors.inkFaint,
+                                    fontWeight: FontWeight.w600,
+                                    letterSpacing: 0.6,
+                                  ),
+                                ),
+                              ),
+                              const Expanded(child: Divider()),
+                            ],
                           ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: () => _continue(),
-                            icon: const Icon(Icons.apple_rounded),
-                            label: const Text('Apple'),
+                          const SizedBox(height: 16),
+                          Row(
+                            children: <Widget>[
+                              Expanded(
+                                child: OutlinedButton.icon(
+                                  onPressed: _isSubmitting
+                                      ? null
+                                      : () => _showNotImplementedMessage(
+                                        _signInMode
+                                            ? 'Google sign in'
+                                            : 'Google sign up',
+                                      ),
+                                  icon: const Icon(
+                                    Icons.g_mobiledata_rounded,
+                                    size: 22,
+                                  ),
+                                  label: const Text('Google'),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: OutlinedButton.icon(
+                                  onPressed: _isSubmitting
+                                      ? null
+                                      : () => _showNotImplementedMessage(
+                                        _signInMode
+                                            ? 'Apple sign in'
+                                            : 'Apple sign up',
+                                      ),
+                                  icon: const Icon(Icons.apple_rounded),
+                                  label: const Text('Apple'),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
-                    ),
-                    const Spacer(),
-                    Text.rich(
-                      TextSpan(
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: AppColors.inkSoft,
-                        ),
-                        children: <TextSpan>[
-                          TextSpan(
-                            text: _signInMode
-                                ? "Don't have an account? "
-                                : 'Already a member? ',
+                          const SizedBox(height: 18),
+                          Wrap(
+                            alignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 4,
+                            children: <Widget>[
+                              Text(
+                                _signInMode
+                                    ? "Don't have an account?"
+                                    : 'Already a member?',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: AppColors.inkSoft,
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: _isSubmitting
+                                    ? null
+                                    : () => setState(
+                                        () => _signInMode = !_signInMode,
+                                      ),
+                                child: Text(
+                                  _signInMode ? 'Sign up' : 'Sign in',
+                                  style: const TextStyle(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                          TextSpan(
-                            text: _signInMode ? 'Sign up' : 'Sign in',
-                            style: const TextStyle(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
+                          const SizedBox(height: 6),
                         ],
                       ),
                     ),
-                    const SizedBox(height: 6),
-                    TextButton(
-                      onPressed: () =>
-                          setState(() => _signInMode = !_signInMode),
-                      child: const Text('Toggle mode'),
-                    ),
-                  ],
-                ),
+                  );
+                },
               ),
             ),
           ),
@@ -290,6 +401,7 @@ class _LoginScreenState extends State<LoginScreen> {
             controller: controller,
             obscureText: obscureText,
             onSubmitted: (_) => _continue(),
+            onTapOutside: (_) => FocusScope.of(context).unfocus(),
             decoration: InputDecoration(hintText: hint),
           ),
         ],
