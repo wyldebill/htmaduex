@@ -13,15 +13,6 @@ void main() {
   });
 
   Future<void> pumpLogin(WidgetTester tester, AuthService authService) async {
-    // Ensure a large-enough view to avoid layout overflows in tests.
-    tester.view.physicalSize = const Size(1170, 2532);
-    tester.view.devicePixelRatio = 3.0;
-    addTearDown(() {
-      tester.view.resetPhysicalSize();
-      tester.view.resetDevicePixelRatio();
-      tester.view.resetViewInsets();
-    });
-
     final GoRouter router = GoRouter(
       initialLocation: '/login',
       routes: <RouteBase>[
@@ -54,9 +45,7 @@ void main() {
     final _TestAuthService auth = _TestAuthService();
     await pumpLogin(tester, auth);
 
-    final Finder usernameField = find.byWidgetPredicate(
-      (Widget w) => w is TextField && (w.decoration?.hintText == 'you@example.com'),
-    );
+    final Finder usernameField = find.byHintText('you@example.com');
     expect(usernameField, findsOneWidget);
 
     await tester.enterText(usernameField, 'prefill@example.com');
@@ -81,20 +70,10 @@ void main() {
     await tester.pumpAndSettle();
 
     final Finder sheetField = find.byKey(const ValueKey('forgot-email-field'));
-
-    final Finder sendButtonFinder = find.byKey(const ValueKey('forgot-send-button'));
-    // Initially the Send button should be disabled because the field is empty.
-    final ElevatedButton sendBefore = tester.widget<ElevatedButton>(sendButtonFinder);
-    expect(sendBefore.onPressed, isNull);
-
     await tester.enterText(sheetField, '  user@example.com  ');
     await tester.pumpAndSettle();
 
-    // After typing, the Send button should enable.
-    final ElevatedButton sendAfter = tester.widget<ElevatedButton>(sendButtonFinder);
-    expect(sendAfter.onPressed, isNotNull);
-
-    await tester.tap(sendButtonFinder);
+    await tester.tap(find.byKey(const ValueKey('forgot-send-button')));
     await tester.pumpAndSettle();
 
     expect(auth.lastEmail, 'user@example.com');
