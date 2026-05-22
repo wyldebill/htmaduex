@@ -8,8 +8,13 @@ import 'package:mapme/auth/auth_service.dart';
 import 'package:mapme/auth/email_verification_status_store.dart';
 
 class _MockFirebaseAuth extends Mock implements FirebaseAuth {}
+
 class _MockUserCredential extends Mock implements UserCredential {}
+
 class _MockUser extends Mock implements User {}
+class _MockEmailVerificationStatusStore extends Mock
+    implements EmailVerificationStatusStore {}
+
 class _MockEmailVerificationStatusStore extends Mock
     implements EmailVerificationStatusStore {}
 
@@ -20,8 +25,8 @@ class _FakeUserMetadata implements UserMetadata {
   final DateTime? lastSignInTime;
 
   _FakeUserMetadata({DateTime? creationTime})
-      : creationTime = creationTime,
-        lastSignInTime = null;
+    : creationTime = creationTime,
+      lastSignInTime = null;
 }
 
 void main() {
@@ -44,7 +49,8 @@ void main() {
       final _MockUserCredential cred = _MockUserCredential();
       final _MockUser user = _MockUser();
 
-      when(() => auth.createUserWithEmailAndPassword(
+        when(
+          () => auth.createUserWithEmailAndPassword(
             email: any(named: 'email'),
             password: any(named: 'password'),
           )).thenAnswer((_) async => cred);
@@ -59,9 +65,10 @@ void main() {
         ),
       ).thenAnswer((_) async {});
 
-      await service.signUp(email: ' new@example.com ', password: 'secret123');
+        await service.signUp(email: ' new@example.com ', password: 'secret123');
 
-      verify(() => auth.createUserWithEmailAndPassword(
+        verify(
+          () => auth.createUserWithEmailAndPassword(
             email: 'new@example.com',
             password: 'secret123',
           )).called(1);
@@ -79,17 +86,21 @@ void main() {
       final _MockUserCredential cred = _MockUserCredential();
       final _MockUser user = _MockUser();
 
-      when(() => auth.signInWithEmailAndPassword(
-            email: any(named: 'email'),
-            password: any(named: 'password'),
-          )).thenAnswer((_) async => cred);
+      when(
+        () => auth.signInWithEmailAndPassword(
+          email: any(named: 'email'),
+          password: any(named: 'password'),
+        ),
+      ).thenAnswer((_) async => cred);
       when(() => cred.user).thenReturn(user);
       when(() => user.reload()).thenAnswer((_) async {});
       when(() => auth.currentUser).thenReturn(user);
       when(() => user.uid).thenReturn('user-2');
       when(() => user.email).thenReturn('a@b.c');
       // Provide metadata object without creationTime so treated as not expired (creationTime null)
-      when(() => user.metadata).thenReturn(_FakeUserMetadata(creationTime: null));
+      when(
+        () => user.metadata,
+      ).thenReturn(_FakeUserMetadata(creationTime: null));
       when(() => auth.signOut()).thenAnswer((_) async {});
       when(
         () => verificationStatusStore.markPendingVerification(

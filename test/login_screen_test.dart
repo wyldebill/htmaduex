@@ -11,10 +11,15 @@ import 'package:mapme/screens/verification_screen.dart';
 import 'package:mapme/theme/app_theme.dart';
 
 class _FakeAuthService implements AuthService {
-  _FakeAuthService({this.fail = false, this.unverified = false});
+  _FakeAuthService({
+    this.fail = false,
+    this.unverified = false,
+    bool hasSeenOnboarding = false,
+  }) : _hasSeenOnboarding = hasSeenOnboarding;
 
   final bool fail;
   final bool unverified;
+  final bool _hasSeenOnboarding;
 
   @override
   Future<void> signIn({required String email, required String password}) async {
@@ -47,6 +52,77 @@ class _FakeAuthService implements AuthService {
 
   @override
   Future<void> resendVerification() async {}
+
+  @override
+  Future<bool> hasSeenOnboarding() async => _hasSeenOnboarding;
+
+  @override
+  Future<void> markOnboardingSeen() async {}
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {}
+}
+
+class _DelayedSignUpAuthService implements AuthService {
+  final Completer<void> signUpCompleter = Completer<void>();
+
+  @override
+  Future<void> signIn({
+    required String email,
+    required String password,
+  }) async {}
+
+  @override
+  Future<void> signUp({required String email, required String password}) {
+    return signUpCompleter.future;
+  }
+
+  @override
+  Future<void> signOut() async {}
+
+  @override
+  Future<void> resendVerification() async {}
+
+  @override
+  Future<bool> hasSeenOnboarding() async => false;
+
+  @override
+  Future<void> markOnboardingSeen() async {}
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {}
+}
+
+class _TooManyRequestsAuthService implements AuthService {
+  @override
+  Future<void> signIn({required String email, required String password}) async {
+    throw FirebaseAuthException(
+      code: 'too-many-requests',
+      message:
+          'We have blocked all requests from this device due to unusual activity. Try again later.',
+    );
+  }
+
+  @override
+  Future<void> signUp({
+    required String email,
+    required String password,
+  }) async {}
+
+  @override
+  Future<void> signOut() async {}
+
+  @override
+  Future<void> resendVerification() async {}
+
+  @override
+  Future<bool> hasSeenOnboarding() async => false;
+
+  @override
+  Future<void> markOnboardingSeen() async {}
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {}
 }
 
 class _DelayedSignUpAuthService implements AuthService {
@@ -96,6 +172,46 @@ class _TooManyRequestsAuthService implements AuthService {
 void main() {
   setUp(() {
     TestWidgetsFlutterBinding.ensureInitialized();
+  });
+
+  testWidgets('sign in skips onboarding when already seen', (
+    WidgetTester tester,
+  ) async {
+    tester.view.physicalSize = const Size(1170, 2532);
+    tester.view.devicePixelRatio = 3.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+      tester.view.resetViewInsets();
+    });
+
+    final GoRouter router = GoRouter(
+      initialLocation: '/login',
+      routes: <RouteBase>[
+        GoRoute(
+          path: '/login',
+          builder: (BuildContext context, GoRouterState state) => LoginScreen(
+            authService: _FakeAuthService(hasSeenOnboarding: true),
+          ),
+        ),
+        GoRoute(
+          path: '/map',
+          builder: (BuildContext context, GoRouterState state) =>
+              const Scaffold(body: Center(child: Text('Map page'))),
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      MaterialApp.router(theme: appTheme, routerConfig: router),
+    );
+
+    await tester.enterText(find.byType(TextField).at(0), 'user@example.com');
+    await tester.enterText(find.byType(TextField).at(1), 'secret123');
+    await tester.tap(find.widgetWithText(ElevatedButton, 'Sign in'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Map page'), findsOneWidget);
   });
 
   testWidgets('successful sign in navigates to onboarding', (

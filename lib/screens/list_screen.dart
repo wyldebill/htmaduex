@@ -320,6 +320,7 @@ class _ListScreenState extends State<ListScreen> {
             onDestinationSelected: (int i) {
               if (i == 0) context.go('/map');
               if (i == 1) context.go('/list');
+              if (i == 3) context.go('/profile');
             },
             destinations: const <NavigationDestination>[
               NavigationDestination(

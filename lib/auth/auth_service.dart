@@ -10,6 +10,13 @@ abstract class AuthService {
   Future<void> signOut();
 
   Future<void> resendVerification();
+
+  Future<void> markOnboardingSeen();
+
+  Future<bool> hasSeenOnboarding();
+
+  /// Sends a password reset email to the given address using Firebase Auth.
+  Future<void> sendPasswordResetEmail(String email);
 }
 
 class FirebaseAuthService implements AuthService {

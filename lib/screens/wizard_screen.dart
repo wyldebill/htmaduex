@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
 
+import '../auth/auth_service.dart';
 import '../theme/app_theme.dart';
 
 class WizardScreen extends StatefulWidget {
-  const WizardScreen({super.key});
+  const WizardScreen({super.key, this.authService});
+
+  final AuthService? authService;
 
   @override
   State<WizardScreen> createState() => _WizardScreenState();
@@ -12,10 +16,18 @@ class WizardScreen extends StatefulWidget {
 
 class _WizardScreenState extends State<WizardScreen> {
   final PageController _pageController = PageController();
+  late final AuthService _authService;
   int _step = 0;
+  bool _isCompleting = false;
 
-  final List<({String title, String body, IconData icon})> _slides =
-      <({String title, String body, IconData icon})>[
+  @override
+  void initState() {
+    super.initState();
+    _authService = widget.authService ?? FirebaseAuthService();
+  }
+
+  final List<({String title, String body, IconData icon})>
+  _slides = <({String title, String body, IconData icon})>[
     (
       title: 'Your neighborhood, in one place.',
       body:
@@ -30,7 +42,8 @@ class _WizardScreenState extends State<WizardScreen> {
     ),
     (
       title: 'Find exactly what you need.',
-      body: 'Search by name, filter by category, and see open hours at a glance.',
+      body:
+          'Search by name, filter by category, and see open hours at a glance.',
       icon: Icons.manage_search_rounded,
     ),
     (
@@ -40,9 +53,39 @@ class _WizardScreenState extends State<WizardScreen> {
     ),
   ];
 
-  void _goNext() {
-    if (_step == _slides.length - 1) {
+  Future<void> _completeWizard() async {
+    if (_isCompleting) return;
+    setState(() => _isCompleting = true);
+    try {
+      await _authService.markOnboardingSeen();
+    } finally {
+      if (mounted) {
+        setState(() => _isCompleting = false);
+      }
+    }
+  }
+
+  Future<void> _completeWizardAndGoMap() async {
+    try {
+      await _completeWizard();
+      if (!mounted) return;
       context.go('/map');
+    } on FirebaseAuthException catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.message ??
+                'Could not save onboarding progress. Please try again.',
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> _goNext() async {
+    if (_step == _slides.length - 1) {
+      await _completeWizardAndGoMap();
       return;
     }
     _pageController.nextPage(
@@ -66,7 +109,9 @@ class _WizardScreenState extends State<WizardScreen> {
                   child: _step == _slides.length - 1
                       ? const SizedBox.shrink()
                       : TextButton(
-                          onPressed: () => context.go('/map'),
+                          onPressed: _isCompleting
+                              ? null
+                              : () => _completeWizardAndGoMap(),
                           child: const Text('Skip'),
                         ),
                 ),
@@ -92,7 +137,10 @@ class _WizardScreenState extends State<WizardScreen> {
                             decoration: BoxDecoration(
                               color: AppColors.surface,
                               shape: BoxShape.circle,
-                              border: Border.all(color: AppColors.border, width: 1.5),
+                              border: Border.all(
+                                color: AppColors.border,
+                                width: 1.5,
+                              ),
                             ),
                             child: Icon(
                               slide.icon,
@@ -140,7 +188,9 @@ class _WizardScreenState extends State<WizardScreen> {
                         width: _step == i ? 24 : 6,
                         height: 6,
                         decoration: BoxDecoration(
-                          color: _step == i ? AppColors.primary : AppColors.border,
+                          color: _step == i
+                              ? AppColors.primary
+                              : AppColors.border,
                           borderRadius: BorderRadius.circular(3),
                         ),
                       ),
@@ -150,9 +200,11 @@ class _WizardScreenState extends State<WizardScreen> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: _goNext,
+                      onPressed: _isCompleting ? null : _goNext,
                       child: Text(
-                        _step == _slides.length - 1 ? 'Get started' : 'Continue',
+                        _step == _slides.length - 1
+                            ? 'Get started'
+                            : 'Continue',
                       ),
                     ),
                   ),

@@ -20,4 +20,9 @@ class BusinessRepository {
         .toList();
     return _cache!;
   }
+
+  /// For tests: set an in-memory cache of businesses
+  static void setCache(List<Business>? cache) {
+    _cache = cache;
+  }
 }

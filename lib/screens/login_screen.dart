@@ -49,7 +49,9 @@ class _LoginScreenState extends State<LoginScreen> {
       if (_signInMode) {
         await _authService.signIn(email: email, password: password);
         if (!mounted) return;
-        context.go('/onboarding');
+        final bool hasSeenOnboarding = await _authService.hasSeenOnboarding();
+        if (!mounted) return;
+        context.go(hasSeenOnboarding ? '/map' : '/onboarding');
       } else {
         await _authService.signUp(email: email, password: password);
         if (!mounted) return;

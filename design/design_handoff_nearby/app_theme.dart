@@ -12,32 +12,32 @@ import 'package:google_fonts/google_fonts.dart';
 class AppColors {
   AppColors._();
 
-  static const primary      = Color(0xFFF25D3A);
-  static const primaryDeep  = Color(0xFFC9421F);
-  static const primarySoft  = Color(0xFFFDD8C8);
-  static const accent       = Color(0xFF2E8F88); // teal — ratings, fitness
-  static const accentSoft   = Color(0xFFD4EAE7);
+  static const primary = Color(0xFFF25D3A);
+  static const primaryDeep = Color(0xFFC9421F);
+  static const primarySoft = Color(0xFFFDD8C8);
+  static const accent = Color(0xFF2E8F88); // teal — ratings, fitness
+  static const accentSoft = Color(0xFFD4EAE7);
 
-  static const bg           = Color(0xFFF4D9C8); // warm peach scaffold bg
-  static const bgDeep       = Color(0xFFEBC2A8);
-  static const surface      = Color(0xFFFFF8F1); // cards, inputs, sheets
-  static const ink          = Color(0xFF3A1F10); // primary text
-  static const inkSoft      = Color(0xFF7A5540); // secondary text
-  static const inkFaint     = Color(0xFFB89880); // placeholder / disabled
+  static const bg = Color(0xFFF4D9C8); // warm peach scaffold bg
+  static const bgDeep = Color(0xFFEBC2A8);
+  static const surface = Color(0xFFFFF8F1); // cards, inputs, sheets
+  static const ink = Color(0xFF3A1F10); // primary text
+  static const inkSoft = Color(0xFF7A5540); // secondary text
+  static const inkFaint = Color(0xFFB89880); // placeholder / disabled
 
-  static const border       = Color(0xFFE8C8B0);
-  static const chipBg       = Color(0xFFF8E6D6);
+  static const border = Color(0xFFE8C8B0);
+  static const chipBg = Color(0xFFF8E6D6);
 
   // Category tints
-  static const tint1        = Color(0xFFF7C66B); // mustard  — Services
-  static const tint2        = Color(0xFF6FA8A0); // teal     — Bars
-  static const tint3        = Color(0xFF8B6FBF); // plum     — Shops
-  static const tint4        = Color(0xFFE87A9B); // pink     — Food
+  static const tint1 = Color(0xFFF7C66B); // mustard  — Services
+  static const tint2 = Color(0xFF6FA8A0); // teal     — Bars
+  static const tint3 = Color(0xFF8B6FBF); // plum     — Shops
+  static const tint4 = Color(0xFFE87A9B); // pink     — Food
 
   // Status
-  static const openGreen    = Color(0xFF0E8F5E);
-  static const openGreenBg  = Color(0xFFE6F7EE);
-  static const userBlue     = Color(0xFF2D7EF5);
+  static const openGreen = Color(0xFF0E8F5E);
+  static const openGreenBg = Color(0xFFE6F7EE);
+  static const userBlue = Color(0xFF2D7EF5);
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -48,23 +48,35 @@ enum BusinessCategory { cafe, restaurant, shop, service, fitness, bar }
 extension BusinessCategoryColor on BusinessCategory {
   Color get color {
     switch (this) {
-      case BusinessCategory.cafe:       return AppColors.primary;
-      case BusinessCategory.restaurant: return AppColors.tint4;
-      case BusinessCategory.shop:       return AppColors.tint3;
-      case BusinessCategory.service:    return AppColors.tint1;
-      case BusinessCategory.fitness:    return AppColors.accent;
-      case BusinessCategory.bar:        return AppColors.tint2;
+      case BusinessCategory.cafe:
+        return AppColors.primary;
+      case BusinessCategory.restaurant:
+        return AppColors.tint4;
+      case BusinessCategory.shop:
+        return AppColors.tint3;
+      case BusinessCategory.service:
+        return AppColors.tint1;
+      case BusinessCategory.fitness:
+        return AppColors.accent;
+      case BusinessCategory.bar:
+        return AppColors.tint2;
     }
   }
 
   String get label {
     switch (this) {
-      case BusinessCategory.cafe:       return 'Cafés';
-      case BusinessCategory.restaurant: return 'Food';
-      case BusinessCategory.shop:       return 'Shops';
-      case BusinessCategory.service:    return 'Services';
-      case BusinessCategory.fitness:    return 'Fitness';
-      case BusinessCategory.bar:        return 'Bars';
+      case BusinessCategory.cafe:
+        return 'Cafés';
+      case BusinessCategory.restaurant:
+        return 'Food';
+      case BusinessCategory.shop:
+        return 'Shops';
+      case BusinessCategory.service:
+        return 'Services';
+      case BusinessCategory.fitness:
+        return 'Fitness';
+      case BusinessCategory.bar:
+        return 'Bars';
     }
   }
 }
@@ -101,25 +113,67 @@ final appTheme = ThemeData(
 
   textTheme: GoogleFonts.interTextTheme(
     const TextTheme(
-      displayLarge:  TextStyle(fontSize: 28, fontWeight: FontWeight.w700, letterSpacing: -0.6, height: 1.2),
-      displayMedium: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, letterSpacing: -0.4),
-      displaySmall:  TextStyle(fontSize: 20, fontWeight: FontWeight.w700, letterSpacing: -0.3),
-      headlineMedium:TextStyle(fontSize: 18, fontWeight: FontWeight.w700, letterSpacing: -0.2),
-      headlineSmall: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: -0.2),
-      titleLarge:    TextStyle(fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: -0.2),
-      titleMedium:   TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-      titleSmall:    TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
-      bodyLarge:     TextStyle(fontSize: 15, fontWeight: FontWeight.w400, height: 1.5),
-      bodyMedium:    TextStyle(fontSize: 14, fontWeight: FontWeight.w400, height: 1.45),
-      bodySmall:     TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-      labelLarge:    TextStyle(fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 0.1),
-      labelMedium:   TextStyle(fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 0.2),
-      labelSmall:    TextStyle(fontSize: 11, fontWeight: FontWeight.w600, letterSpacing: 0.4),
+      displayLarge: TextStyle(
+        fontSize: 28,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.6,
+        height: 1.2,
+      ),
+      displayMedium: TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.4,
+      ),
+      displaySmall: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.3,
+      ),
+      headlineMedium: TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.2,
+      ),
+      headlineSmall: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.2,
+      ),
+      titleLarge: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        letterSpacing: -0.2,
+      ),
+      titleMedium: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+      titleSmall: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+      bodyLarge: TextStyle(
+        fontSize: 15,
+        fontWeight: FontWeight.w400,
+        height: 1.5,
+      ),
+      bodyMedium: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        height: 1.45,
+      ),
+      bodySmall: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+      labelLarge: TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.1,
+      ),
+      labelMedium: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.2,
+      ),
+      labelSmall: TextStyle(
+        fontSize: 11,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.4,
+      ),
     ),
-  ).apply(
-    bodyColor: AppColors.ink,
-    displayColor: AppColors.ink,
-  ),
+  ).apply(bodyColor: AppColors.ink, displayColor: AppColors.ink),
 
   // Elevated buttons — primary CTA style
   elevatedButtonTheme: ElevatedButtonThemeData(
@@ -130,7 +184,11 @@ final appTheme = ThemeData(
       shadowColor: AppColors.primary.withValues(alpha: 0.35),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
       padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 16),
-      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 0.1),
+      textStyle: const TextStyle(
+        fontSize: 16,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.1,
+      ),
     ),
   ),
 
@@ -198,9 +256,17 @@ final appTheme = ThemeData(
     }),
     labelTextStyle: WidgetStateProperty.resolveWith((states) {
       if (states.contains(WidgetState.selected)) {
-        return const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: AppColors.primary);
+        return const TextStyle(
+          fontSize: 10.5,
+          fontWeight: FontWeight.w700,
+          color: AppColors.primary,
+        );
       }
-      return const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w500, color: AppColors.inkFaint);
+      return const TextStyle(
+        fontSize: 10.5,
+        fontWeight: FontWeight.w500,
+        color: AppColors.inkFaint,
+      );
     }),
   ),
 
@@ -211,8 +277,10 @@ final appTheme = ThemeData(
     scrolledUnderElevation: 0,
     foregroundColor: AppColors.ink,
     titleTextStyle: TextStyle(
-      fontSize: 17, fontWeight: FontWeight.w700,
-      color: AppColors.ink, letterSpacing: -0.3,
+      fontSize: 17,
+      fontWeight: FontWeight.w700,
+      color: AppColors.ink,
+      letterSpacing: -0.3,
     ),
   ),
 );
@@ -222,19 +290,19 @@ final appTheme = ThemeData(
 // ─────────────────────────────────────────────────────────────
 class AppSpacing {
   AppSpacing._();
-  static const double xs   = 4;
-  static const double sm   = 8;
-  static const double md   = 14;
-  static const double lg   = 20;
-  static const double xl   = 24;
-  static const double xxl  = 32;
+  static const double xs = 4;
+  static const double sm = 8;
+  static const double md = 14;
+  static const double lg = 20;
+  static const double xl = 24;
+  static const double xxl = 32;
 
-  static const double cardRadius     = 16;
-  static const double buttonRadius   = 14;
-  static const double inputRadius    = 12;
-  static const double chipRadius     = 20;  // pill
-  static const double tileRadius     = 14;
-  static const double sheetRadius    = 24;
+  static const double cardRadius = 16;
+  static const double buttonRadius = 14;
+  static const double inputRadius = 12;
+  static const double chipRadius = 20; // pill
+  static const double tileRadius = 14;
+  static const double sheetRadius = 24;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -249,7 +317,11 @@ class AppShadows {
   ];
 
   static List<BoxShadow> primaryButton(Color primary) => [
-    BoxShadow(color: primary.withValues(alpha: 0.35), blurRadius: 24, offset: const Offset(0, 10)),
+    BoxShadow(
+      color: primary.withValues(alpha: 0.35),
+      blurRadius: 24,
+      offset: const Offset(0, 10),
+    ),
   ];
 
   static const List<BoxShadow> mapControl = [
