@@ -30,6 +30,15 @@ class _NoUserAuthService implements AuthService {
     required String email,
     required String password,
   }) async {}
+
+  @override
+  Future<bool> hasSeenOnboarding() async => false;
+
+  @override
+  Future<void> markOnboardingSeen() async {}
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {}
 }
 
 class _TooManyRequestsResendAuthService implements AuthService {
@@ -55,6 +64,15 @@ class _TooManyRequestsResendAuthService implements AuthService {
     required String email,
     required String password,
   }) async {}
+
+  @override
+  Future<bool> hasSeenOnboarding() async => false;
+
+  @override
+  Future<void> markOnboardingSeen() async {}
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {}
 }
 
 void main() {

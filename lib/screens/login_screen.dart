@@ -481,9 +481,17 @@ class _LoginScreenState extends State<LoginScreen> {
                               TextButton(
                                 onPressed: _isSubmitting
                                     ? null
-                                    : () => setState(
-                                        () => _signInMode = !_signInMode,
-                                      ),
+                                    : () {
+                                        setState(() {
+                                          _signInMode = !_signInMode;
+                                          // Clear fields when toggling modes to match
+                                          // expected UX and widget tests.
+                                          _usernameController.clear();
+                                          _passwordController.clear();
+                                        });
+                                        // Ensure no field remains focused.
+                                        FocusScope.of(context).unfocus();
+                                      },
                                 child: Text(
                                   _signInMode ? 'Sign up' : 'Sign in',
                                   style: const TextStyle(

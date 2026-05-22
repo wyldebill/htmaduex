@@ -9,17 +9,12 @@ import 'package:mapme/auth/email_verification_status_store.dart';
 
 class _MockFirebaseAuth extends Mock implements FirebaseAuth {}
 
+class _MockOnboardingStatusStore extends Mock
+    implements OnboardingStatusStore {}
+
 class _MockUserCredential extends Mock implements UserCredential {}
 
 class _MockUser extends Mock implements User {}
-class _MockEmailVerificationStatusStore extends Mock
-    implements EmailVerificationStatusStore {}
-
-class _MockEmailVerificationStatusStore extends Mock
-    implements EmailVerificationStatusStore {}
-
-class _MockEmailVerificationStatusStore extends Mock
-    implements EmailVerificationStatusStore {}
 
 class _MockEmailVerificationStatusStore extends Mock
     implements EmailVerificationStatusStore {}
@@ -38,17 +33,27 @@ class _FakeUserMetadata implements UserMetadata {
 void main() {
   group('FirebaseAuthService', () {
     late _MockFirebaseAuth auth;
+    late _MockOnboardingStatusStore onboardingStatusStore;
     late _MockEmailVerificationStatusStore verificationStatusStore;
     late FirebaseAuthService service;
 
     setUp(() {
       auth = _MockFirebaseAuth();
+      onboardingStatusStore = _MockOnboardingStatusStore();
       verificationStatusStore = _MockEmailVerificationStatusStore();
       service = FirebaseAuthService(
         auth: auth,
+        onboardingStatusStore: onboardingStatusStore,
         verificationStatusStore: verificationStatusStore,
       );
       registerFallbackValue(Uri());
+      registerFallbackValue('fallback');
+      when(
+        () => onboardingStatusStore.markOnboardingSeen(uid: any(named: 'uid')),
+      ).thenAnswer((_) async {});
+      when(
+        () => onboardingStatusStore.hasSeenOnboarding(uid: any(named: 'uid')),
+      ).thenAnswer((_) async => false);
     });
 
     test('signUp sends verification and keeps current user for verification flow', () async {
@@ -139,6 +144,9 @@ void main() {
       when(() => auth.currentUser).thenReturn(user);
       when(() => user.uid).thenReturn('user-3');
       when(() => user.emailVerified).thenReturn(true);
+      when(
+        () => onboardingStatusStore.hasSeenOnboarding(uid: any(named: 'uid')),
+      ).thenAnswer((_) async => true);
       when(
         () => verificationStatusStore.markVerified(uid: any(named: 'uid')),
       ).thenAnswer((_) async {});
