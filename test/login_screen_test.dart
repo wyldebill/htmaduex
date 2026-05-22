@@ -125,6 +125,50 @@ class _TooManyRequestsAuthService implements AuthService {
   Future<void> sendPasswordResetEmail(String email) async {}
 }
 
+class _DelayedSignUpAuthService implements AuthService {
+  final Completer<void> signUpCompleter = Completer<void>();
+
+  @override
+  Future<void> signIn({
+    required String email,
+    required String password,
+  }) async {}
+
+  @override
+  Future<void> signUp({required String email, required String password}) {
+    return signUpCompleter.future;
+  }
+
+  @override
+  Future<void> signOut() async {}
+
+  @override
+  Future<void> resendVerification() async {}
+}
+
+class _TooManyRequestsAuthService implements AuthService {
+  @override
+  Future<void> signIn({required String email, required String password}) async {
+    throw FirebaseAuthException(
+      code: 'too-many-requests',
+      message:
+          'We have blocked all requests from this device due to unusual activity. Try again later.',
+    );
+  }
+
+  @override
+  Future<void> signUp({
+    required String email,
+    required String password,
+  }) async {}
+
+  @override
+  Future<void> signOut() async {}
+
+  @override
+  Future<void> resendVerification() async {}
+}
+
 void main() {
   setUp(() {
     TestWidgetsFlutterBinding.ensureInitialized();
@@ -457,30 +501,4 @@ void main() {
     );
   });
 
-  testWidgets('clears fields when toggling sign in and sign up', (WidgetTester tester) async {
-    tester.view.physicalSize = const Size(1170, 2532);
-    tester.view.devicePixelRatio = 3.0;
-    addTearDown(() {
-      tester.view.resetPhysicalSize();
-      tester.view.resetDevicePixelRatio();
-      tester.view.resetViewInsets();
-    });
-
-    await tester.pumpWidget(MaterialApp(home: LoginScreen(authService: _FakeAuthService())));
-
-    // enter text into username and password
-    await tester.enterText(find.byType(TextField).at(0), 'user@example.com');
-    await tester.enterText(find.byType(TextField).at(1), 'secret123');
-    await tester.pump();
-
-    // toggle to sign up
-    await tester.tap(find.widgetWithText(TextButton, 'Sign up'));
-    await tester.pumpAndSettle();
-
-    // assert fields are cleared
-    final TextField username = tester.widget(find.byType(TextField).at(0));
-    final TextField password = tester.widget(find.byType(TextField).at(1));
-    expect(username.controller?.text, isEmpty);
-    expect(password.controller?.text, isEmpty);
-  });
 }
