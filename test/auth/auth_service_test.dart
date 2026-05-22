@@ -21,6 +21,9 @@ class _MockEmailVerificationStatusStore extends Mock
 class _MockEmailVerificationStatusStore extends Mock
     implements EmailVerificationStatusStore {}
 
+class _MockEmailVerificationStatusStore extends Mock
+    implements EmailVerificationStatusStore {}
+
 class _FakeUserMetadata implements UserMetadata {
   @override
   final DateTime? creationTime;
