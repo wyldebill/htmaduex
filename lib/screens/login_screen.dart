@@ -107,6 +107,16 @@ class _LoginScreenState extends State<LoginScreen> {
     final TextEditingController sheetController =
         TextEditingController(text: _usernameController.text);
 
+    // We'll create a listener that triggers the StatefulBuilder's setState
+    // so the Send button updates as the user types. Keep a reference so we
+    // can remove it when the sheet is dismissed.
+    StateSetter? sheetSetState;
+    void listener() {
+      if (sheetSetState != null) sheetSetState!(() {});
+    }
+
+    sheetController.addListener(listener);
+
     await showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
@@ -117,6 +127,9 @@ class _LoginScreenState extends State<LoginScreen> {
       builder: (BuildContext ctx) {
         bool sheetSubmitting = false;
         return StatefulBuilder(builder: (BuildContext context, setState) {
+          // Expose the setState to our listener so typing can trigger rebuilds.
+          sheetSetState = setState;
+
           return Padding(
             padding: EdgeInsets.only(
               bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -209,6 +222,12 @@ class _LoginScreenState extends State<LoginScreen> {
         });
       },
     );
+
+    // Cleanup listener after the sheet is dismissed. Avoid disposing the
+    // controller here to prevent race conditions with the framework as the
+    // sheet unmounts in tests and during animations.
+    sheetController.removeListener(listener);
+    sheetSetState = null;
   }
 
   Future<void> _handleSendReset(
@@ -481,9 +500,17 @@ class _LoginScreenState extends State<LoginScreen> {
                               TextButton(
                                 onPressed: _isSubmitting
                                     ? null
-                                    : () => setState(
-                                        () => _signInMode = !_signInMode,
-                                      ),
+                                    : () {
+                                        setState(() {
+                                          _signInMode = !_signInMode;
+                                          // Clear fields when toggling modes to match
+                                          // expected UX and widget tests.
+                                          _usernameController.clear();
+                                          _passwordController.clear();
+                                        });
+                                        // Ensure no field remains focused.
+                                        FocusScope.of(context).unfocus();
+                                      },
                                 child: Text(
                                   _signInMode ? 'Sign up' : 'Sign in',
                                   style: const TextStyle(
