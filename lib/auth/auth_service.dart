@@ -1,6 +1,42 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'email_verification_status_store.dart';
+
+abstract class OnboardingStatusStore {
+  Future<void> markOnboardingSeen({required String uid});
+
+  Future<bool> hasSeenOnboarding({required String uid});
+}
+
+class FirestoreOnboardingStatusStore implements OnboardingStatusStore {
+  FirestoreOnboardingStatusStore({FirebaseFirestore? firestore})
+    : _firestore = firestore ?? FirebaseFirestore.instance;
+
+  final FirebaseFirestore _firestore;
+
+  DocumentReference<Map<String, dynamic>> _userStateDoc(String uid) =>
+      _firestore.collection('user_state').doc(uid);
+
+  @override
+  Future<void> markOnboardingSeen({required String uid}) async {
+    await _userStateDoc(uid).set(
+      <String, dynamic>{
+        'onboardingSeen': true,
+        'updatedAt': FieldValue.serverTimestamp(),
+      },
+      SetOptions(merge: true),
+    );
+  }
+
+  @override
+  Future<bool> hasSeenOnboarding({required String uid}) async {
+    final DocumentSnapshot<Map<String, dynamic>> snapshot =
+        await _userStateDoc(uid).get();
+    final Map<String, dynamic>? data = snapshot.data();
+    return data?['onboardingSeen'] == true;
+  }
+}
 
 abstract class AuthService {
   Future<void> signIn({required String email, required String password});
@@ -22,15 +58,17 @@ abstract class AuthService {
 class FirebaseAuthService implements AuthService {
   FirebaseAuthService({
     FirebaseAuth? auth,
+    OnboardingStatusStore? onboardingStatusStore,
     EmailVerificationStatusStore? verificationStatusStore,
   }) : _auth = auth ?? FirebaseAuth.instance,
+       _onboardingStatusStore =
+          onboardingStatusStore ?? FirestoreOnboardingStatusStore(),
        _verificationStatusStore =
            verificationStatusStore ?? FirestoreEmailVerificationStatusStore();
 
   final FirebaseAuth _auth;
+  final OnboardingStatusStore _onboardingStatusStore;
   final EmailVerificationStatusStore _verificationStatusStore;
-
-  static const Duration _verificationWindow = Duration(days: 7);
 
   static const Duration _verificationWindow = Duration(days: 7);
 
@@ -130,6 +168,52 @@ class FirebaseAuthService implements AuthService {
     }
 
     await user.sendEmailVerification();
+  }
+
+  @override
+  Future<void> markOnboardingSeen() async {
+    final User? user = _auth.currentUser;
+    if (user == null) {
+      throw FirebaseAuthException(
+        code: 'no-user',
+        message: 'No active user session.',
+      );
+    }
+
+    try {
+      await _onboardingStatusStore.markOnboardingSeen(uid: user.uid);
+    } on FirebaseException catch (e) {
+      throw FirebaseAuthException(
+        code: 'onboarding-status-sync-failed',
+        message:
+            'Unable to save onboarding status right now. ${e.message ?? ''}'
+                .trim(),
+      );
+    }
+  }
+
+  @override
+  Future<bool> hasSeenOnboarding() async {
+    final User? user = _auth.currentUser;
+    if (user == null) {
+      return false;
+    }
+
+    try {
+      return await _onboardingStatusStore.hasSeenOnboarding(uid: user.uid);
+    } on FirebaseException catch (e) {
+      throw FirebaseAuthException(
+        code: 'onboarding-status-sync-failed',
+        message:
+            'Unable to read onboarding status right now. ${e.message ?? ''}'
+                .trim(),
+      );
+    }
+  }
+
+  @override
+  Future<void> sendPasswordResetEmail(String email) async {
+    await _auth.sendPasswordResetEmail(email: email.trim());
   }
 
   Future<void> _markPendingVerification(

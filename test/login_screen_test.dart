@@ -125,50 +125,6 @@ class _TooManyRequestsAuthService implements AuthService {
   Future<void> sendPasswordResetEmail(String email) async {}
 }
 
-class _DelayedSignUpAuthService implements AuthService {
-  final Completer<void> signUpCompleter = Completer<void>();
-
-  @override
-  Future<void> signIn({
-    required String email,
-    required String password,
-  }) async {}
-
-  @override
-  Future<void> signUp({required String email, required String password}) {
-    return signUpCompleter.future;
-  }
-
-  @override
-  Future<void> signOut() async {}
-
-  @override
-  Future<void> resendVerification() async {}
-}
-
-class _TooManyRequestsAuthService implements AuthService {
-  @override
-  Future<void> signIn({required String email, required String password}) async {
-    throw FirebaseAuthException(
-      code: 'too-many-requests',
-      message:
-          'We have blocked all requests from this device due to unusual activity. Try again later.',
-    );
-  }
-
-  @override
-  Future<void> signUp({
-    required String email,
-    required String password,
-  }) async {}
-
-  @override
-  Future<void> signOut() async {}
-
-  @override
-  Future<void> resendVerification() async {}
-}
-
 void main() {
   setUp(() {
     TestWidgetsFlutterBinding.ensureInitialized();
