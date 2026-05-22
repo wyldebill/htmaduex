@@ -32,6 +32,8 @@ class FirebaseAuthService implements AuthService {
 
   static const Duration _verificationWindow = Duration(days: 7);
 
+  static const Duration _verificationWindow = Duration(days: 7);
+
   @override
   Future<void> signIn({required String email, required String password}) async {
     final UserCredential cred = await _auth.signInWithEmailAndPassword(
@@ -128,66 +130,6 @@ class FirebaseAuthService implements AuthService {
     }
 
     await user.sendEmailVerification();
-  }
-
-  @override
-  Future<void> sendPasswordResetEmail(String email) async {
-    try {
-      await _auth.sendPasswordResetEmail(email: email.trim());
-    } on FirebaseAuthException catch (e) {
-      // Surface friendly FirebaseAuthException to callers
-      throw FirebaseAuthException(
-        code: e.code,
-        message: e.message ?? 'Failed to send password reset email.',
-      );
-    } catch (e) {
-      throw FirebaseAuthException(
-        code: 'password-reset-failed',
-        message: e.toString(),
-      );
-    }
-  }
-
-  @override
-  Future<void> markOnboardingSeen() async {
-    final User? user = _auth.currentUser;
-    if (user == null) {
-      throw FirebaseAuthException(
-        code: 'no-user',
-        message: 'No active user to mark onboarding status.',
-      );
-    }
-    try {
-      await _verificationStatusStore.markOnboardingSeen(uid: user.uid);
-    } on FirebaseException catch (e) {
-      throw FirebaseAuthException(
-        code: 'onboarding-status-sync-failed',
-        message:
-            'Unable to save onboarding status right now. ${e.message ?? ''}'
-                .trim(),
-      );
-    }
-  }
-
-  @override
-  Future<bool> hasSeenOnboarding() async {
-    final User? user = _auth.currentUser;
-    if (user == null) {
-      throw FirebaseAuthException(
-        code: 'no-user',
-        message: 'No active user to read onboarding status.',
-      );
-    }
-    try {
-      return await _verificationStatusStore.hasSeenOnboarding(uid: user.uid);
-    } on FirebaseException catch (e) {
-      throw FirebaseAuthException(
-        code: 'onboarding-status-sync-failed',
-        message:
-            'Unable to read onboarding status right now. ${e.message ?? ''}'
-                .trim(),
-      );
-    }
   }
 
   Future<void> _markPendingVerification(

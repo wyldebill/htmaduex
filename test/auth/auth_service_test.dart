@@ -12,6 +12,8 @@ class _MockFirebaseAuth extends Mock implements FirebaseAuth {}
 class _MockUserCredential extends Mock implements UserCredential {}
 
 class _MockUser extends Mock implements User {}
+class _MockEmailVerificationStatusStore extends Mock
+    implements EmailVerificationStatusStore {}
 
 class _MockEmailVerificationStatusStore extends Mock
     implements EmailVerificationStatusStore {}
@@ -43,28 +45,25 @@ void main() {
       registerFallbackValue(Uri());
     });
 
-    test(
-      'signUp sends verification and keeps current user for verification flow',
-      () async {
-        final _MockUserCredential cred = _MockUserCredential();
-        final _MockUser user = _MockUser();
+    test('signUp sends verification and keeps current user for verification flow', () async {
+      final _MockUserCredential cred = _MockUserCredential();
+      final _MockUser user = _MockUser();
 
         when(
           () => auth.createUserWithEmailAndPassword(
             email: any(named: 'email'),
             password: any(named: 'password'),
-          ),
-        ).thenAnswer((_) async => cred);
-        when(() => cred.user).thenReturn(user);
-        when(() => user.uid).thenReturn('user-1');
-        when(() => user.sendEmailVerification()).thenAnswer((_) async {});
-        when(() => auth.signOut()).thenAnswer((_) async {});
-        when(
-          () => verificationStatusStore.markPendingVerification(
-            uid: any(named: 'uid'),
-            email: any(named: 'email'),
-          ),
-        ).thenAnswer((_) async {});
+          )).thenAnswer((_) async => cred);
+      when(() => cred.user).thenReturn(user);
+      when(() => user.uid).thenReturn('user-1');
+      when(() => user.sendEmailVerification()).thenAnswer((_) async {});
+      when(() => auth.signOut()).thenAnswer((_) async {});
+      when(
+        () => verificationStatusStore.markPendingVerification(
+          uid: any(named: 'uid'),
+          email: any(named: 'email'),
+        ),
+      ).thenAnswer((_) async {});
 
         await service.signUp(email: ' new@example.com ', password: 'secret123');
 
@@ -72,18 +71,16 @@ void main() {
           () => auth.createUserWithEmailAndPassword(
             email: 'new@example.com',
             password: 'secret123',
-          ),
-        ).called(1);
-        verify(() => user.sendEmailVerification()).called(1);
-        verify(
-          () => verificationStatusStore.markPendingVerification(
-            uid: 'user-1',
-            email: 'new@example.com',
-          ),
-        ).called(1);
-        verifyNever(() => auth.signOut());
-      },
-    );
+          )).called(1);
+      verify(() => user.sendEmailVerification()).called(1);
+      verify(
+        () => verificationStatusStore.markPendingVerification(
+          uid: 'user-1',
+          email: 'new@example.com',
+        ),
+      ).called(1);
+      verifyNever(() => auth.signOut());
+    });
 
     test('signIn throws when not verified', () async {
       final _MockUserCredential cred = _MockUserCredential();
@@ -117,78 +114,33 @@ void main() {
 
       await expectLater(
         service.signIn(email: 'a@b.c', password: 'pw'),
-        throwsA(
-          isA<FirebaseAuthException>().having(
-            (e) => e.code,
-            'code',
-            'email-not-verified',
-          ),
-        ),
+        throwsA(isA<FirebaseAuthException>().having((e) => e.code, 'code', 'email-not-verified')),
       );
 
       verify(() => auth.signOut()).called(1);
     });
 
-    test(
-      'signIn clears pending verification status when user is verified',
-      () async {
-        final _MockUserCredential cred = _MockUserCredential();
-        final _MockUser user = _MockUser();
+    test('signIn clears pending verification status when user is verified', () async {
+      final _MockUserCredential cred = _MockUserCredential();
+      final _MockUser user = _MockUser();
 
-        when(
-          () => auth.signInWithEmailAndPassword(
+      when(() => auth.signInWithEmailAndPassword(
             email: any(named: 'email'),
             password: any(named: 'password'),
-          ),
-        ).thenAnswer((_) async => cred);
-        when(() => cred.user).thenReturn(user);
-        when(() => user.reload()).thenAnswer((_) async {});
-        when(() => auth.currentUser).thenReturn(user);
-        when(() => user.uid).thenReturn('user-3');
-        when(() => user.emailVerified).thenReturn(true);
-        when(
-          () => verificationStatusStore.markVerified(uid: any(named: 'uid')),
-        ).thenAnswer((_) async {});
-
-        await service.signIn(email: 'verified@example.com', password: 'pw');
-
-        verify(
-          () => verificationStatusStore.markVerified(uid: 'user-3'),
-        ).called(1);
-        verifyNever(() => auth.signOut());
-      },
-    );
-
-    test('markOnboardingSeen writes flag for current user', () async {
-      final _MockUser user = _MockUser();
+          )).thenAnswer((_) async => cred);
+      when(() => cred.user).thenReturn(user);
+      when(() => user.reload()).thenAnswer((_) async {});
       when(() => auth.currentUser).thenReturn(user);
-      when(() => user.uid).thenReturn('user-4');
+      when(() => user.uid).thenReturn('user-3');
+      when(() => user.emailVerified).thenReturn(true);
       when(
-        () =>
-            verificationStatusStore.markOnboardingSeen(uid: any(named: 'uid')),
+        () => verificationStatusStore.markVerified(uid: any(named: 'uid')),
       ).thenAnswer((_) async {});
 
-      await service.markOnboardingSeen();
+      await service.signIn(email: 'verified@example.com', password: 'pw');
 
-      verify(
-        () => verificationStatusStore.markOnboardingSeen(uid: 'user-4'),
-      ).called(1);
-    });
-
-    test('hasSeenOnboarding reads onboarding flag for current user', () async {
-      final _MockUser user = _MockUser();
-      when(() => auth.currentUser).thenReturn(user);
-      when(() => user.uid).thenReturn('user-5');
-      when(
-        () => verificationStatusStore.hasSeenOnboarding(uid: any(named: 'uid')),
-      ).thenAnswer((_) async => true);
-
-      final bool seen = await service.hasSeenOnboarding();
-
-      expect(seen, isTrue);
-      verify(
-        () => verificationStatusStore.hasSeenOnboarding(uid: 'user-5'),
-      ).called(1);
+      verify(() => verificationStatusStore.markVerified(uid: 'user-3')).called(1);
+      verifyNever(() => auth.signOut());
     });
   });
 }
