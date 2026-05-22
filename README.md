@@ -32,6 +32,20 @@ Before first iOS debug session, run `tool/sync_secrets.ps1` (or `.sh`) so `ios/F
 
 Android reads `.env` directly via Gradle each build.
 
+## Admin website (React + Vite)
+
+A lightweight admin UI is available in `admin/` for editing Firestore business records.
+
+1. `cd admin`
+2. `cp .env.example .env.local` and fill Firebase web config values for project `shopsfirebase-a92b0`
+3. `npm install`
+4. `npm run dev`
+
+Notes:
+- Sign in with the same Firebase email/password used by the app.
+- The site edits documents in Firestore collection `businesses`.
+- If your account is unverified, verify email first (same behavior as app auth flow).
+
 ## Codemagic
 
 `codemagic.yaml` expects these environment variables:

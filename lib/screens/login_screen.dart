@@ -101,104 +101,6 @@ class _LoginScreenState extends State<LoginScreen> {
     _showMessage('$feature is not implemented yet.');
   }
 
-  Future<void> _showPasswordResetDialog() async {
-    final TextEditingController emailController = TextEditingController(
-      text: _usernameController.text.trim(),
-    );
-    final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-
-    String? validateEmail(String? value) {
-      if (value == null || value.trim().isEmpty) {
-        return 'Enter your email.';
-      }
-      final RegExp emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
-      if (!emailRegex.hasMatch(value.trim())) {
-        return 'Enter a valid email address.';
-      }
-      return null;
-    }
-
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      builder: (BuildContext ctx) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(ctx).viewInsets.bottom,
-          ),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
-              child: Form(
-                key: formKey,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      'Reset password',
-                      style: Theme.of(ctx).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 12),
-                    TextFormField(
-                      controller: emailController,
-                      decoration: const InputDecoration(
-                        labelText: 'Email',
-                        hintText: 'you@example.com',
-                      ),
-                      validator: validateEmail,
-                      keyboardType: TextInputType.emailAddress,
-                      autofillHints: const [AutofillHints.email],
-                      autofocus: true,
-                    ),
-                    const SizedBox(height: 18),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        TextButton(
-                          onPressed: () => Navigator.of(ctx).pop(),
-                          child: const Text('Cancel'),
-                        ),
-                        const SizedBox(width: 8),
-                        ElevatedButton(
-                          onPressed: () async {
-                            if (formKey.currentState?.validate() != true) {
-                              return;
-                            }
-                            final String email = emailController.text.trim();
-                            Navigator.of(ctx).pop();
-                            try {
-                              await _authService.sendPasswordResetEmail(email);
-                              if (!mounted) return;
-                              _showMessage(
-                                'Password reset email sent. Check your inbox.',
-                              );
-                            } on FirebaseAuthException catch (e) {
-                              if (!mounted) return;
-                              _showMessage(
-                                e.message ?? 'Failed to send reset email.',
-                              );
-                            } catch (_) {
-                              if (!mounted) {
-                                return;
-                              }
-                              _showMessage('Failed to send reset email.');
-                            }
-                          },
-                          child: const Text('Send'),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -323,7 +225,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: TextButton(
                                   onPressed: _isSubmitting
                                       ? null
-                                      : () => _showPasswordResetDialog(),
+                                      : () => _showNotImplementedMessage(
+                                        'Forgot password',
+                                      ),
                                   style: TextButton.styleFrom(
                                     padding: EdgeInsets.zero,
                                     minimumSize: Size.zero,
@@ -331,7 +235,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         MaterialTapTargetSize.shrinkWrap,
                                   ),
                                   child: Text(
-                                    'Forgot password?',
+                                    'Forgot?',
                                     style: TextStyle(
                                       color: AppColors.primary,
                                       fontWeight: FontWeight.w600,
@@ -402,10 +306,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onPressed: _isSubmitting
                                       ? null
                                       : () => _showNotImplementedMessage(
-                                          _signInMode
-                                              ? 'Google sign in'
-                                              : 'Google sign up',
-                                        ),
+                                        _signInMode
+                                            ? 'Google sign in'
+                                            : 'Google sign up',
+                                      ),
                                   icon: const Icon(
                                     Icons.g_mobiledata_rounded,
                                     size: 22,
@@ -419,10 +323,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onPressed: _isSubmitting
                                       ? null
                                       : () => _showNotImplementedMessage(
-                                          _signInMode
-                                              ? 'Apple sign in'
-                                              : 'Apple sign up',
-                                        ),
+                                        _signInMode
+                                            ? 'Apple sign in'
+                                            : 'Apple sign up',
+                                      ),
                                   icon: const Icon(Icons.apple_rounded),
                                   label: const Text('Apple'),
                                 ),
@@ -447,14 +351,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               TextButton(
                                 onPressed: _isSubmitting
                                     ? null
-                                    : () {
-                                        FocusScope.of(context).unfocus();
-                                        setState(() {
-                                          _signInMode = !_signInMode;
-                                          _usernameController.clear();
-                                          _passwordController.clear();
-                                        });
-                                      },
+                                    : () => setState(
+                                        () => _signInMode = !_signInMode,
+                                      ),
                                 child: Text(
                                   _signInMode ? 'Sign up' : 'Sign in',
                                   style: const TextStyle(
