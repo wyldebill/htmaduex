@@ -101,6 +101,138 @@ class _LoginScreenState extends State<LoginScreen> {
     _showMessage('$feature is not implemented yet.');
   }
 
+  Future<void> _showForgotPasswordSheet() async {
+    if (_isSubmitting) return;
+
+    final TextEditingController sheetController =
+        TextEditingController(text: _usernameController.text);
+
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Theme.of(context).canvasColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+      ),
+      builder: (BuildContext ctx) {
+        bool sheetSubmitting = false;
+        return StatefulBuilder(builder: (BuildContext context, setState) {
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: SafeArea(
+                top: false,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          const SizedBox(width: 48),
+                          const Text(
+                            'Reset password',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                            ),
+                          ),
+                          IconButton(
+                            key: const ValueKey('forgot-cancel-button'),
+                            onPressed: sheetSubmitting
+                                ? null
+                                : () => Navigator.of(context).pop(),
+                            icon: const Icon(Icons.close),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      const Text(
+                        'Enter your account email to receive reset instructions',
+                        style: TextStyle(fontSize: 13),
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        key: const ValueKey('forgot-email-field'),
+                        controller: sheetController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: const InputDecoration(
+                          hintText: 'you@example.com',
+                        ),
+                        onSubmitted: (_) async {
+                          if (sheetSubmitting) return;
+                          await _handleSendReset(
+                            sheetController,
+                            (bool v) => setState(() => sheetSubmitting = v),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        height: 44,
+                        child: ElevatedButton(
+                          key: const ValueKey('forgot-send-button'),
+                          onPressed: (sheetController.text.trim().isEmpty || sheetSubmitting)
+                              ? null
+                              : () async {
+                                  await _handleSendReset(
+                                    sheetController,
+                                    (bool v) => setState(() => sheetSubmitting = v),
+                                  );
+                                },
+                          child: sheetSubmitting
+                              ? const SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : const Text('Send reset'),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        });
+      },
+    );
+  }
+
+  Future<void> _handleSendReset(
+    TextEditingController sheetController,
+    void Function(bool) setSubmitting,
+  ) async {
+    final String email = sheetController.text.trim();
+    if (email.isEmpty) return;
+
+    setSubmitting(true);
+    try {
+      await _authService.sendPasswordResetEmail(email);
+      if (!mounted) return;
+      Navigator.of(context).pop();
+      _showMessage('Password reset email sent.');
+    } on FirebaseAuthException catch (e) {
+      _showMessage(_friendlyAuthMessage(e));
+    } catch (_) {
+      _showMessage('Password reset failed.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -225,9 +357,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: TextButton(
                                   onPressed: _isSubmitting
                                       ? null
-                                      : () => _showNotImplementedMessage(
-                                        'Forgot password',
-                                      ),
+                                      : _showForgotPasswordSheet,
                                   style: TextButton.styleFrom(
                                     padding: EdgeInsets.zero,
                                     minimumSize: Size.zero,
