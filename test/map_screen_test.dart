@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mapme/screens/map_screen.dart';
-import 'package:mapme/models/business.dart';
+import 'package:htmarevived/screens/map_screen.dart';
+import 'package:htmarevived/models/business.dart';
 
 void main() {
   testWidgets('map screen', (WidgetTester tester) async {

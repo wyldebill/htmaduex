@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:mapme/screens/detail_screen.dart';
-import 'package:mapme/screens/list_screen.dart';
-import 'package:mapme/theme/app_theme.dart';
+import 'package:htmarevived/screens/detail_screen.dart';
+import 'package:htmarevived/screens/list_screen.dart';
+import 'package:htmarevived/theme/app_theme.dart';
 
 void main() {
   testWidgets(

@@ -1,6 +1,6 @@
 # Project Context
 
-- **Project:** mapme
+- **Project:** htmarevived
 - **Created:** 2026-05-08
 
 ## Core Context

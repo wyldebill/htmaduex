@@ -7,7 +7,7 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "mapme/config")
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "htmarevived/config")
             .setMethodCallHandler { call, result ->
                 if (call.method == "getFirebaseConfig") {
                     result.success(

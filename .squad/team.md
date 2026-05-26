@@ -1,6 +1,6 @@
 # Squad Team
 
-> mapme
+> htmarevived
 
 ## Coordinator
 
@@ -21,7 +21,7 @@
 
 ## Project Context
 
-- **Project:** mapme
+- **Project:** htmarevived
 - **Created:** 2026-05-08
 - **Owner:** William Austin
 - **Description:** Flutter mobile app work for map features.

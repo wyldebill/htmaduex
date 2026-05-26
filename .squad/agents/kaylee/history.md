@@ -1,7 +1,7 @@
 # Project Context
 
 - **Owner:** William Austin
-- **Project:** mapme
+- **Project:** htmarevived
 - **Stack:** Dart, Flutter, Google Maps integrations
 - **Created:** 2026-05-08
 

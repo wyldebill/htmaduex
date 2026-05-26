@@ -1,6 +1,6 @@
 workflows:
-  mapme-mobile:
-    name: Mapme Mobile
+  htmarevived-mobile:
+    name: htmarevived Mobile
     environment:
       flutter: stable
     scripts:
