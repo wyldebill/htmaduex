@@ -65,6 +65,32 @@
 
 ---
 
+### 2026-05-26T23:20:00.000-05:00: Map background tap dismisses the bottom panel
+**By:** Kaylee (Frontend Dev), River (Tester)
+**Status:** Implemented
+
+**Context:**
+When a user taps a map marker, a slide-up panel appears at the bottom of `MapScreen` showing the selected business. There was no way to dismiss this panel other than selecting a different marker.
+
+**Decision:**
+Tapping the empty map background (no marker) deselects the current marker and slides the panel back down.
+
+**Implementation:**
+- Added `onTap: (_) => setState(() => _selectedId = null)` to the `GoogleMap` widget in `lib/screens/map_screen.dart`.
+- Wrapped the non-map fallback `Container` in a `GestureDetector` with the same dismiss callback, enabling consistent behavior across all platforms and widget testing without native Google Maps.
+- Moved `IgnorePointer` to wrap the panel `Container` directly rather than wrapping `Align` itself. This ensures the full-screen `Align` no longer absorbs pointer events outside the visible panel, allowing taps on the map or fallback background to propagate correctly.
+
+**Rationale:**
+- The previous `IgnorePointer(child: Align(child: Container))` structure caused `Align` (which fills its parent) to consume all hit-tests in the full screen area when the panel was visible, blocking the underlying map's `onTap`.
+- Scoping `IgnorePointer` to only the panel `Container` fixes this with minimal structural change.
+- Minimal change approach reduces regression risk for other panel behaviors.
+
+**Test Approach:**
+- Widget test (`test/map_screen_test.dart`) uses `mapSupportedOverride: false` and `tester.tapAt(const Offset(400, 180))` to simulate a tap in the open map area.
+- Y-coordinate chosen to land between the filter chips overlay (top) and the bottom panel (when visible), which occupies the lower ~270 px of the Stack.
+
+---
+
 ## Archive (decisions older than 30 days)
 
 *None yet*
