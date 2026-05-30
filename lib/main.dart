@@ -7,6 +7,7 @@ import 'screens/detail_screen.dart';
 import 'screens/list_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/splash_screen.dart';
 import 'screens/verification_screen.dart';
 import 'screens/map_screen.dart';
 import 'screens/wizard_screen.dart';
@@ -21,8 +22,13 @@ Future<void> main() async {
 }
 
 final GoRouter _router = GoRouter(
-  initialLocation: '/login',
+  initialLocation: '/',
   routes: <RouteBase>[
+    GoRoute(
+      path: '/',
+      builder: (BuildContext context, GoRouterState state) =>
+          const SplashScreen(),
+    ),
     GoRoute(
       path: '/login',
       builder: (BuildContext context, GoRouterState state) =>
