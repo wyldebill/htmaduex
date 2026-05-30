@@ -94,6 +94,7 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                   zoomControlsEnabled: false,
                   myLocationButtonEnabled: false,
+                  onTap: (_) => setState(() => _selectedId = null),
                   markers: filtered.map((Business item) {
                     return Marker(
                       markerId: MarkerId('biz-${item.id}'),
@@ -103,19 +104,22 @@ class _MapScreenState extends State<MapScreen> {
                   }).toSet(),
                 )
               else
-                Container(
-                  color: AppColors.primarySoft,
-                  alignment: Alignment.center,
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 24),
-                    child: Text(
-                      'Map preview unavailable on this platform.',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.inkSoft,
+                GestureDetector(
+                  onTap: () => setState(() => _selectedId = null),
+                  child: Container(
+                    color: AppColors.primarySoft,
+                    alignment: Alignment.center,
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24),
+                      child: Text(
+                        'Map preview unavailable on this platform.',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.inkSoft,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
@@ -221,10 +225,10 @@ class _MapScreenState extends State<MapScreen> {
                 child: AnimatedOpacity(
                   opacity: selected == null ? 0.0 : 1.0,
                   duration: const Duration(milliseconds: 200),
-                  child: IgnorePointer(
-                    ignoring: selected == null,
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
+                 child: Align(
+                   alignment: Alignment.bottomCenter,
+                   child: IgnorePointer(
+                     ignoring: selected == null,
                       child: Container(
                         width: double.infinity,
                         padding: EdgeInsets.fromLTRB(

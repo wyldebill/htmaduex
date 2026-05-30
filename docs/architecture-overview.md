@@ -1,4 +1,4 @@
-# Mapme Architecture Overview
+# htmarevived Architecture Overview
 
 ## App summary
 

@@ -1,4 +1,4 @@
-# mapme
+# htmarevived
 
 Simple Flutter Google Maps app with a single screen and a **Find Me** button.
 

@@ -1,4 +1,4 @@
-# Copilot instructions for `mapme`
+# Copilot instructions for `htmarevived`
 
 ## Build, test, and lint commands
 

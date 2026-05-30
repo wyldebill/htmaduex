@@ -19,7 +19,7 @@ import UIKit
 
     if let controller = window?.rootViewController as? FlutterViewController {
       let channel = FlutterMethodChannel(
-        name: "mapme/config",
+        name: "htmarevived/config",
         binaryMessenger: controller.binaryMessenger
       )
       channel.setMethodCallHandler { call, result in

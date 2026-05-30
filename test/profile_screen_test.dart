@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:mapme/auth/auth_service.dart';
-import 'package:mapme/screens/list_screen.dart';
-import 'package:mapme/screens/profile_screen.dart';
-import 'package:mapme/theme/app_theme.dart';
+import 'package:htmarevived/auth/auth_service.dart';
+import 'package:htmarevived/screens/list_screen.dart';
+import 'package:htmarevived/screens/profile_screen.dart';
+import 'package:htmarevived/theme/app_theme.dart';
 
 class _FakeAuthService implements AuthService {
   bool didSignOut = false;

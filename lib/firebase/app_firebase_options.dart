@@ -11,7 +11,7 @@ import '../firebase_options.dart' as generated;
 class AppFirebaseOptions {
   AppFirebaseOptions._();
 
-  static const MethodChannel _channel = MethodChannel('mapme/config');
+  static const MethodChannel _channel = MethodChannel('htmarevived/config');
 
   static Future<FirebaseOptions> fromPlatform() async {
     // If we're on web or an unsupported desktop platform, prefer the
