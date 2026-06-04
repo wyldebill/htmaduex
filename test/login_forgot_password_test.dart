@@ -13,6 +13,13 @@ void main() {
   });
 
   Future<void> pumpLogin(WidgetTester tester, AuthService authService) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(() {
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
     final GoRouter router = GoRouter(
       initialLocation: '/login',
       routes: <RouteBase>[
@@ -45,7 +52,7 @@ void main() {
     final _TestAuthService auth = _TestAuthService();
     await pumpLogin(tester, auth);
 
-    final Finder usernameField = find.byHintText('you@example.com');
+    final Finder usernameField = find.byKey(const ValueKey('login-email-field'));
     expect(usernameField, findsOneWidget);
 
     await tester.enterText(usernameField, 'prefill@example.com');

@@ -166,6 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         decoration: const InputDecoration(
                           hintText: 'you@example.com',
                         ),
+                        onChanged: (_) => setState(() {}),
                         onSubmitted: (_) async {
                           if (sheetSubmitting) return;
                           await _handleSendReset(
@@ -335,6 +336,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
                           _field(
+                            fieldKey: const ValueKey('login-email-field'),
                             label: 'Username',
                             controller: _usernameController,
                             hint: 'you@example.com',
@@ -517,6 +519,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _field({
+    Key? fieldKey,
     required String label,
     required TextEditingController controller,
     required String hint,
@@ -538,6 +541,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           const SizedBox(height: 6),
           TextField(
+            key: fieldKey,
             controller: controller,
             obscureText: obscureText,
             onSubmitted: (_) => _continue(),

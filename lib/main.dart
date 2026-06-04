@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:go_router/go_router.dart';
 
 import 'firebase/app_firebase_options.dart';
@@ -14,10 +15,14 @@ import 'screens/wizard_screen.dart';
 import 'theme/app_theme.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
   final FirebaseOptions firebaseOptions =
       await AppFirebaseOptions.fromPlatform();
   await Firebase.initializeApp(options: firebaseOptions);
+
+  FlutterNativeSplash.remove();
   runApp(const NearbyApp());
 }
 

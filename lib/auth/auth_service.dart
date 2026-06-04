@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'email_verification_status_store.dart';
+import 'session_service.dart';
 
 abstract class OnboardingStatusStore {
   Future<void> markOnboardingSeen({required String uid});
@@ -60,15 +61,18 @@ class FirebaseAuthService implements AuthService {
     FirebaseAuth? auth,
     OnboardingStatusStore? onboardingStatusStore,
     EmailVerificationStatusStore? verificationStatusStore,
+    SessionService? sessionService,
   }) : _auth = auth ?? FirebaseAuth.instance,
        _onboardingStatusStore =
           onboardingStatusStore ?? FirestoreOnboardingStatusStore(),
        _verificationStatusStore =
-           verificationStatusStore ?? FirestoreEmailVerificationStatusStore();
+           verificationStatusStore ?? FirestoreEmailVerificationStatusStore(),
+       _sessionService = sessionService ?? SessionService();
 
   final FirebaseAuth _auth;
   final OnboardingStatusStore _onboardingStatusStore;
   final EmailVerificationStatusStore _verificationStatusStore;
+  final SessionService _sessionService;
 
   static const Duration _verificationWindow = Duration(days: 7);
 
@@ -121,6 +125,7 @@ class FirebaseAuthService implements AuthService {
     }
 
     await _markVerified(refreshed);
+    await _sessionService.saveLoginTime();
   }
 
   @override
@@ -155,6 +160,7 @@ class FirebaseAuthService implements AuthService {
   @override
   Future<void> signOut() async {
     await _auth.signOut();
+    await _sessionService.clearSession();
   }
 
   @override

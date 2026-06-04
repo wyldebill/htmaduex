@@ -1,19 +1,24 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../auth/auth_service.dart';
+import '../auth/session_service.dart';
 import '../theme/app_theme.dart';
 
-/// How long the splash is shown before navigating to login.
-/// Change this constant to tune the display time.
-const Duration kSplashDisplayDuration = Duration(seconds: 2);
+const Duration kSplashDisplayDuration = Duration(seconds: 4);
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({
     super.key,
     this.displayDuration = kSplashDisplayDuration,
+    this.authService,
+    this.sessionService,
   });
 
   final Duration displayDuration;
+  final AuthService? authService;
+  final SessionService? sessionService;
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -23,10 +28,15 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _fadeController;
   late final Animation<double> _fadeAnimation;
+  late final AuthService _authService;
+  late final SessionService _sessionService;
 
   @override
   void initState() {
     super.initState();
+    _authService = widget.authService ?? FirebaseAuthService();
+    _sessionService = widget.sessionService ?? SessionService();
+
     _fadeController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
@@ -37,9 +47,35 @@ class _SplashScreenState extends State<SplashScreen>
       curve: Curves.easeIn,
     );
 
-    Future.delayed(widget.displayDuration, () {
-      if (mounted) context.go('/login');
-    });
+    _startSplash();
+  }
+
+  Future<void> _startSplash() async {
+    // Timer and auth check run concurrently; navigation waits for both.
+    final (_, destination) = await (
+      Future<void>.delayed(widget.displayDuration),
+      _resolveDestination(),
+    ).wait;
+
+    if (mounted) context.go(destination);
+  }
+
+  Future<String> _resolveDestination() async {
+    try {
+      final User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) return '/login';
+
+      final bool valid = await _sessionService.isSessionValid();
+      if (!valid) {
+        await _authService.signOut();
+        return '/login';
+      }
+
+      final bool onboarded = await _authService.hasSeenOnboarding();
+      return onboarded ? '/map' : '/onboarding';
+    } catch (_) {
+      return '/login';
+    }
   }
 
   @override
