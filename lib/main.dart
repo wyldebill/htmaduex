@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:go_router/go_router.dart';
 
 import 'firebase/app_firebase_options.dart';
@@ -7,22 +8,32 @@ import 'screens/detail_screen.dart';
 import 'screens/list_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/splash_screen.dart';
 import 'screens/verification_screen.dart';
 import 'screens/map_screen.dart';
 import 'screens/wizard_screen.dart';
 import 'theme/app_theme.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  final widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+
   final FirebaseOptions firebaseOptions =
       await AppFirebaseOptions.fromPlatform();
   await Firebase.initializeApp(options: firebaseOptions);
+
+  FlutterNativeSplash.remove();
   runApp(const NearbyApp());
 }
 
 final GoRouter _router = GoRouter(
-  initialLocation: '/login',
+  initialLocation: '/',
   routes: <RouteBase>[
+    GoRoute(
+      path: '/',
+      builder: (BuildContext context, GoRouterState state) =>
+          const SplashScreen(),
+    ),
     GoRoute(
       path: '/login',
       builder: (BuildContext context, GoRouterState state) =>

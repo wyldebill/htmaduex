@@ -30,6 +30,20 @@ The app includes default config for `shopsfirebase-a92b0`; `.env.local` values o
 - Collection name is currently hardcoded to `businesses`.
 - This is an MVP admin: fast, simple UI with no loading animations.
 
+## Deploy to Firebase Hosting
+
+From the repo root:
+
+```bash
+cd admin && npm run build && cd ..
+firebase deploy --only hosting
+```
+
+Prerequisites (one-time):
+- `npm install -g firebase-tools`
+- `firebase login`
+- `firebase use shopsfirebase-a92b0`
+
 ## Firestore permissions (required)
 
 If you see `Missing or insufficient permissions`, deploy the repository's Firestore
